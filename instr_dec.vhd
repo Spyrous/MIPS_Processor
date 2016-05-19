@@ -83,7 +83,7 @@ entity instr_dec is
         -- Function to be executed if instruction is R-Type
         FUNCT_OUT  : out std_logic_vector(5 downto 0);
         -- Immediate Operand if instruction is I-Type
-        IMM_OUT    : out std_logic_vector(15 downto 0)
+        IMM_OUT    : out std_logic_vector(31 downto 0)
     );
 end instr_dec;
 
@@ -144,7 +144,7 @@ begin
                     OPCODE_OUT <= opcode_s;
                     RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
                     RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
-                    IMM_OUT    <= INSTR_TBD_IN(15 downto 0);
+                    IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
                 when others =>
                     
             end case;
