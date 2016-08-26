@@ -72,7 +72,7 @@ entity instr_exe is
         -- Function to be executed if instruction is R-Type
         FUNCT_IN  : in std_logic_vector(5 downto 0);
         -- Immediate Operand if instruction is I-Type
-        IMM_IN    : in std_logic_vector(15 downto 0)
+        IMM_IN    : in std_logic_vector(DATA_WIDTH-1 downto 0)
 
 );
 end instr_exe;
@@ -159,11 +159,15 @@ begin
         -- the appropriate operation (I-Type or J-Type)
             case OPCODE_IN is
                 when ADDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) + unsigned(x"0000" & IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) +   unsigned(IMM_IN));
                 when ADDIU_OP =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) + unsigned(x"0000" & IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) +   unsigned(IMM_IN));
                 when ANDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) and unsigned(x"0000" & IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) and unsigned(IMM_IN));
+                when ORI_OP   =>
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) or  unsigned(IMM_IN));
+                when XORI_OP  =>
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) xor unsigned(IMM_IN));
                 when others =>
 
             end case;
