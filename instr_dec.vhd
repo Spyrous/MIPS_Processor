@@ -175,12 +175,23 @@ begin
                     SHAMT_OUT  <= INSTR_TBD_IN(10 downto 6);
                     FUNCT_OUT  <= INSTR_TBD_IN(5  downto 0);
 
+
+                    -- Control signal configuration for R-Type
+                    REG_WRITE_DEC_OUT  <= '1';
+                    MEM_TO_REG_DEC_OUT <= '0';
+                    MEM_WRITE_DEC_OUT  <= '0';
+                    ALU_SRC_DEC_OUT    <= '0';
+                    
+                        
+                        
                 -- If instruction is I-Type decode the following fields
                 when ADDI_OP|ANDI_OP =>                    
                     OPCODE_OUT <= opcode_s;
                     RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
                     RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
                     IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
+
+                    
                 when others =>
                     
             end case;
