@@ -123,12 +123,20 @@ architecture Behavioral of instr_exe is
 -- Signals
 -------------------------------------------------------------------------------
 signal alu_res_s : std_logic_vector(DATA_WIDTH-1 downto 0);
-    
+
+
+
 --*******************************************************************--
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--        
 begin
 
+    -- Signals forwarded to memory stage
+    REG_WRITE_EXE_OUT  <= REG_WRITE_EXE_IN;
+    MEM_TO_REG_EXE_OUT <= MEM_TO_REG_EXE_IN;
+    MEM_WRITE_EXE_OUT  <= MEM_WRITE_EXE_IN;
+
+    
     -----------------------------------------------------------------
     --                   Instruction Execute                 
     --                                                           
