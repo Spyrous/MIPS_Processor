@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-08-26
+-- Last update: 2016-08-29
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -46,6 +46,8 @@ use IEEE.NUMERIC_STD.ALL;
 
 library work;
 use work.MIPS_Instructions_Pack.ALL;
+
+
 --*******************************************************************--
 --                           E N T I T Y                             --
 --*******************************************************************--
@@ -63,6 +65,37 @@ entity instr_exe is
         
         OPCODE_IN : in std_logic_vector(5 downto 0);
 
+
+        ----------------------------------------------
+        -- Control Signals Received from Decode Stage
+        ----------------------------------------------
+        -- Controls if we write at a register after writeback stage
+        REG_WRITE_EXE_IN  : in std_logic;
+        -- Chooses between ALU result or memory data
+        -- to be written back at registers
+        MEM_TO_REG_EXE_IN : in std_logic;
+        -- Controls reads or writes at memory stage
+        MEM_WRITE_EXE_IN  : in std_logic;
+        -- Controls if one of the ALU sources will be a register
+        -- or the immidiate field
+        ALU_SRC_EXE_IN    : in std_logic;
+        -- Controls where the results from writeback stage go
+        -- either RS register or RT
+        REG_DST_EXE_IN    : in std_logic;
+
+        
+        ----------------------------------------
+        -- Control Signals Sent to Memory Stage
+        ----------------------------------------
+        -- Controls if we write at a register after writeback stage
+        REG_WRITE_EXE_OUT  : out std_logic;
+        -- Chooses between ALU result or memory data
+        -- to be written back at registers
+        MEM_TO_REG_EXE_OUT : out std_logic;
+        -- Controls reads or writes at memory stage
+        MEM_WRITE_EXE_OUT  : out std_logic;
+
+        
         -- RS (Source Operand)
         RS_IN     : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
@@ -86,7 +119,9 @@ end instr_exe;
 architecture Behavioral of instr_exe is
 
 
+-------------------------------------------------------------------------------
 -- Signals
+-------------------------------------------------------------------------------
 signal alu_res_s : std_logic_vector(DATA_WIDTH-1 downto 0);
     
 --*******************************************************************--
@@ -94,7 +129,15 @@ signal alu_res_s : std_logic_vector(DATA_WIDTH-1 downto 0);
 --*******************************************************************--        
 begin
 
-    process(CLK_IN)
+    -----------------------------------------------------------------
+    --                   Instruction Execute                 
+    --                                                           
+    --  Description:                                              
+    --       Executes the instruction specified by opcode and funct
+    --       fields. Also consumes some of the control signals and 
+    --       generates results for the memory stage.
+    -----------------------------------------------------------------
+    instr_exe_PROC: process(CLK_IN)
     begin
         if (RST_IN = '1') then
             alu_res_s <= (others => '0');
@@ -159,15 +202,19 @@ begin
         -- the appropriate operation (I-Type or J-Type)
             case OPCODE_IN is
                 when ADDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) +   unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
                 when ADDIU_OP =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) +   unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
                 when ANDI_OP  =>
                     alu_res_s <= std_logic_vector(unsigned(RS_IN) and unsigned(IMM_IN));
                 when ORI_OP   =>
                     alu_res_s <= std_logic_vector(unsigned(RS_IN) or  unsigned(IMM_IN));
                 when XORI_OP  =>
                     alu_res_s <= std_logic_vector(unsigned(RS_IN) xor unsigned(IMM_IN));
+                when LW_OP    =>
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN   +  unsigned(IMM_IN)));
+                when SW_OP    =>
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN   +  unsigned(IMM_IN)));
                 when others =>
 
             end case;
