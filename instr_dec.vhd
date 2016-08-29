@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-05-19
+-- Last update: 2016-08-29
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -67,6 +67,25 @@ entity instr_dec is
         -- Instruction to be decoded
         INSTR_TBD_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
 
+        
+        -------------------
+        -- Control Signals
+        -------------------
+        -- Controls if we write at a register after writeback stage
+        REG_WRITE_DEC_OUT  : out std_logic;
+        -- Chooses between ALU result or memory data
+        -- to be written back at registers
+        MEM_TO_REG_DEC_OUT : out std_logic;
+        -- Controls reads or writes at memory stage
+        MEM_WRITE_DEC_OUT  : out std_logic;
+        -- Controls if one of the ALU sources will be a register
+        -- or the immidiate field
+        ALU_SRC_DEC_OUT    : out std_logic;
+        -- Controls where the results from writeback stage go
+        -- either RS register or RT
+        REG_DST_DEC_OUT    : out std_logic;
+
+        
         -- Instruction opcode used for execution stage
         OPCODE_OUT : out std_logic_vector(5 downto 0);
 
