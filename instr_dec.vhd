@@ -67,10 +67,25 @@ entity instr_dec is
         -- Instruction to be decoded
         INSTR_TBD_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
 
+
         
-        -------------------
-        -- Control Signals
-        -------------------
+        -- Determines the data to be written in the register specified by
+        -- the writeback stage
+        WB_TO_DEC_DATA_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        -- Determines which register we write to from the writeback stage
+        WRITE_REG_DEC_IN  : in std_logic_vector(4 downto 0);
+
+        
+        ----------------------------
+        -- Control Signals Received
+        ----------------------------
+        -- Controls if we write at a register after writeback stage
+        REG_WRITE_DEC_IN : in std_logic;
+        
+        
+        ------------------------
+        -- Control Signals Sent
+        ------------------------
         -- Controls if we write at a register after writeback stage
         REG_WRITE_DEC_OUT  : out std_logic;
         -- Chooses between ALU result or memory data
@@ -84,6 +99,8 @@ entity instr_dec is
         -- Controls where the results from writeback stage go
         -- either RS register or RT
         REG_DST_DEC_OUT    : out std_logic;
+
+
 
         
         -- Instruction opcode used for execution stage
@@ -167,7 +184,11 @@ begin
                 when others =>
                     
             end case;
-            
+            if (REG_WRITE_DEC_IN = '1') then
+                reg_file_s(to_integer(unsigned(WRITE_REG_DEC_IN))) <= WB_TO_DEC_DATA_IN;
+            else
+                -- Do nothing
+            end if;
         end if;
     end process;
 end Behavioral;
