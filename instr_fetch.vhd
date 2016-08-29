@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-05-16
+-- Last update: 2016-08-29
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ end instr_fetch;
 --*******************************************************************--
 --                     A R C H I T E C T U R E                       --
 --*******************************************************************--
-architecture Behavioral of instr_fetch is
+architecture Structural of instr_fetch is
 
 
     -------------------------------------------------------------------
@@ -158,4 +158,4 @@ begin
         );
 
     
-end Behavioral;
+end Structural;
