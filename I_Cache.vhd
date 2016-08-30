@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-05-15
+-- Last update: 2016-08-30
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -92,8 +92,8 @@ begin
             INSTR_CACHE <= (4 => x"00001111",
                 others => (others =>'0'));
             CACHE_INSTR_OUT <= x"00000000";
-        else
-            CACHE_INSTR_OUT <= INSTR_CACHE(to_integer(unsigned(I_CACHE_PTR_IN)));
+        else            
+            CACHE_INSTR_OUT <= INSTR_CACHE(to_integer(unsigned(I_CACHE_PTR_IN) srl 2));
         end if;
     end process;
     

@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-05-16
+-- Last update: 2016-08-30
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ begin
             pc_out_s <= x"00000000";
         elsif (rising_edge(CLK_IN)) then
             PC_OUT   <= pc_out_s;
-            pc_out_s <= std_logic_vector(unsigned(pc_out_s) + 1);
+            pc_out_s <= std_logic_vector(unsigned(pc_out_s) + 4);
         end if;
     end process;
 
