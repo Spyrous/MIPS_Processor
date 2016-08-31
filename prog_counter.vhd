@@ -61,9 +61,14 @@ entity prog_counter is
         CLK_IN : in std_logic;
         -- Global reset signal active high
         RST_IN : in std_logic;
-      
+
+        -- Program counter select in fetch stage
+        PC_SEL_FE_IN    : in std_logic;
+        -- Program counter branch address in fetch stage
+        PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+        
         -- Program counter output
-        PC_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0)
+        PC_PLUS4_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0)
         );
 end prog_counter;
 
@@ -99,11 +104,15 @@ begin
     pc_incr_PROC : process(CLK_IN)
     begin
         if (RST_IN = '1') then
-            PC_OUT <= x"00000000";
+            PC_PLUS4_FE_OUT <= x"00000000";
             pc_out_s <= x"00000000";
         elsif (rising_edge(CLK_IN)) then
-            PC_OUT   <= pc_out_s;
-            pc_out_s <= std_logic_vector(unsigned(pc_out_s) + 4);
+            PC_PLUS4_FE_OUT <= pc_out_s;
+            if (PC_SEL_FE_IN = '0') then
+                pc_out_s <= std_logic_vector(unsigned(pc_out_s) + 4);
+            elsif (PC_SEL_FE_IN = '1') then
+                pc_out_s <= PC_BRANCH_FE_IN;
+            end if;
         end if;
     end process;
 

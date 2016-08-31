@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-08-29
+-- Last update: 2016-08-30
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -53,7 +53,8 @@ use work.MIPS_Instructions_Pack.ALL;
 --*******************************************************************--
 entity instr_exe is
     generic (
-        DATA_WIDTH    : integer := 32
+        DATA_WIDTH : integer := 32;
+        ADDR_WIDTH : integer := 32
     );
     
     port (
@@ -62,7 +63,7 @@ entity instr_exe is
         -- Global reset signal active high
         RST_IN : in std_logic;
 
-        
+        -- Opcode to be decoded from first 6 bits of the instruction
         OPCODE_IN : in std_logic_vector(5 downto 0);
 
 
@@ -83,6 +84,13 @@ entity instr_exe is
         -- either RS register or RT
         REG_DST_EXE_IN    : in std_logic;
 
+        ----------------------------------------
+        -- Control Signals Sent to Fetch Stage
+        ----------------------------------------
+        -- Program counter select in fetch stage
+        PC_SEL_EXE_OUT     : out std_logic;
+        -- Program counter branch address in fetch stage
+        PC_BRANCH_EXE_OUT  : out std_logic_vector(ADDR_WIDTH-1 downto 0);
         
         ----------------------------------------
         -- Control Signals Sent to Memory Stage

@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-08-29
+-- Last update: 2016-08-30
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -61,6 +61,11 @@ entity instr_fetch is
         CLK_IN : in std_logic;
         RST_IN : in std_logic;
 
+        -- Program counter select in fetch stage
+        PC_SEL_FE_IN    : in std_logic;
+        -- Program counter branch address in fetch stage
+        PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+
         CACHE_INSTR_DEC_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0)
     );
 end instr_fetch;
@@ -94,9 +99,15 @@ architecture Structural of instr_fetch is
             CLK_IN : in std_logic;
             -- Global reset signal active high
             RST_IN : in std_logic;
+
+            -- Program counter select in fetch stage
+            PC_SEL_FE_IN    : in std_logic;
+            -- Program counter branch address in fetch stage
+            PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
             
             -- Program counter output
-            PC_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0)
+            PC_PLUS4_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0)
+            
             );
     end component;
 
@@ -136,9 +147,13 @@ begin
             CLK_IN => CLK_IN,
             -- Global reset signal active high
             RST_IN => RST_IN,
-            
+
+            -- Program counter select in fetch stage
+            PC_SEL_FE_IN    => PC_SEL_FE_IN,
+            -- Program counter branch address in fetch stage
+            PC_BRANCH_FE_IN => PC_BRANCH_FE_IN,
             -- Program counter output
-            PC_OUT => i_cache_ptr_s
+            PC_PLUS4_FE_OUT => i_cache_ptr_s
             );
 
     instruction_cache: I_Cache
