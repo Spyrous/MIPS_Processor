@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-08-30
+-- Last update: 2016-08-31
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -228,9 +228,9 @@ begin
                 when XORI_OP  =>
                     alu_res_s <= std_logic_vector(unsigned(RS_IN) xor unsigned(IMM_IN));
                 when LW_OP    =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN   +  unsigned(IMM_IN)));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
                 when SW_OP    =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN   +  unsigned(IMM_IN)));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
                 when others =>
 
             end case;
