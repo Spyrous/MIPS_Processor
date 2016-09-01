@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-08-29
+-- Last update: 2016-09-01
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -55,6 +55,7 @@ use work.MIPS_Instructions_Pack.all;
 entity instr_dec is
     generic (
         REG_FILE_SIZE : integer := 32;
+        ADDR_WIDTH    : integer := 32;
         DATA_WIDTH    : integer := 32
     );
 
@@ -65,9 +66,14 @@ entity instr_dec is
         RST_IN : in std_logic;
 
         -- Instruction to be decoded
-        INSTR_TBD_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        INSTR_TBD_IN      : in std_logic_vector(DATA_WIDTH-1 downto 0);
 
-
+        -- Program counter from fetch stage
+        PC_PLUS4_DEC_IN   : in unsigned(ADDR_WIDTH-1 downto 0);
+        -- Program counter select signal for fetch stage
+        PC_SEL_DEC_OUT    : out std_logic;
+        -- Program counter branch address forwarded to fetch stage
+        PC_BRANCH_DEC_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
         
         -- Determines the data to be written in the register specified by
         -- the writeback stage
@@ -137,7 +143,8 @@ type registerFile is array(0 to REG_FILE_SIZE-1) of std_logic_vector(DATA_WIDTH-
 signal reg_file_s : registerFile;
 -- Used to read the opcode and decide the fields to be decoded
 signal opcode_s   : std_logic_vector(5 downto 0);
-
+-- The sign extended immediate field for I-Type instructions
+signal signed_imm_s : std_logic_vector(DATA_WIDTH-1 downto 0);
 
 
 
@@ -146,7 +153,11 @@ signal opcode_s   : std_logic_vector(5 downto 0);
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--    
 begin
+    
+    PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
 
+
+    
     -----------------------------------------------------------------
     --                   Instruction Decode                 
     --                                                           
@@ -155,16 +166,27 @@ begin
     --       on the type of the instruction(R/I/J-Type). The results
     --       are then forwarded for execution at the execution stage.
     -----------------------------------------------------------------
-    instr_dec_PROC: process(CLK_IN)
+    instr_dec_PROC: process(CLK_IN, RST_IN)
     begin
         if (RST_IN = '1') then
             -- Set all 32 registers to 0 except register 0 which is initiated to hex 11111111
             reg_file_s <= (0 => x"11111111",
                            others => (others => '0'));
+            signed_imm_s <= (others => '0');
+            
         elsif (rising_edge(CLK_IN)) then
            
             opcode_s <= INSTR_TBD_IN(31 downto 26);
-                        
+
+            if (INSTR_TBD_IN(15) = '0') then
+                signed_imm_s <= x"000" & "00" & INSTR_TBD_IN(15 downto 0) & "00";
+                -- Add the former program counter with our branch offset (relative addressing)
+
+            else
+                signed_imm_s <= x"FFF" & "11" & INSTR_TBD_IN(15 downto 0) & "00";
+                
+            end if;
+            
             case (opcode_s) is
                 -- If instruction R-Type decode the following fields
                 when R_TYPE_OP =>             
@@ -191,10 +213,16 @@ begin
                     RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
                     IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
 
+                when BEQ_OP =>
+                    OPCODE_OUT <= opcode_s;
+                    RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
+                    RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
+
                     
                 when others =>
                     
             end case;
+            
             if (REG_WRITE_DEC_IN = '1') then
                 reg_file_s(to_integer(unsigned(WRITE_REG_DEC_IN))) <= WB_TO_DEC_DATA_IN;
             else
