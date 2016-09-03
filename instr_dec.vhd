@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-01
+-- Last update: 2016-09-03
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -154,6 +154,7 @@ signal signed_imm_s : std_logic_vector(DATA_WIDTH-1 downto 0);
 --*******************************************************************--    
 begin
     
+    -- Where to branch to relative to the current program counter
     PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
 
 
@@ -178,13 +179,14 @@ begin
            
             opcode_s <= INSTR_TBD_IN(31 downto 26);
 
+            -- If the MSB (Most Significant Bit) of our immediate field is '0' we extend
+            -- with zeroes if it's '1' we extend ones
             if (INSTR_TBD_IN(15) = '0') then
-                signed_imm_s <= x"000" & "00" & INSTR_TBD_IN(15 downto 0) & "00";
-                -- Add the former program counter with our branch offset (relative addressing)
-
+                -- Concatenating 14 bits + immediate 16 bits + 2 zeroes by shifting to left
+                signed_imm_s <= x"000" & "00" & INSTR_TBD_IN(15 downto 0) & "00";                
             else
-                signed_imm_s <= x"FFF" & "11" & INSTR_TBD_IN(15 downto 0) & "00";
-                
+                -- Concatenating 14 bits + immediate 16 bits + 2 zeroes by shifting to left
+                signed_imm_s <= x"FFF" & "11" & INSTR_TBD_IN(15 downto 0) & "00";               
             end if;
             
             case (opcode_s) is
