@@ -45,7 +45,7 @@
 -----------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use IEEE.NUMERIC_STD.ALL;
 
 
 --*******************************************************************--
@@ -65,7 +65,8 @@ entity instr_fetch is
         PC_SEL_FE_IN    : in std_logic;
         -- Program counter branch address in fetch stage
         PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
-
+        -- Program counter output to decode stage
+        PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0);
         -- Instruction to be executed by the rest of the pipeline
         CACHE_INSTR_FE_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0)
     );
@@ -105,11 +106,12 @@ architecture Structural of instr_fetch is
             PC_SEL_FE_IN    : in std_logic;
             -- Program counter branch address in fetch stage
             PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+            -- Program counter pointer to instruction cache memory
+            I_CACHE_PTR_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0);
+            -- Program counter output to decode stage
+            PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0)
             
-            -- Program counter output
-            PC_PLUS4_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0)
-            
-            );
+        );
     end component;
 
     component I_Cache
@@ -150,12 +152,14 @@ begin
             RST_IN => RST_IN,
 
             -- Program counter select in fetch stage
-            PC_SEL_FE_IN    => PC_SEL_FE_IN,
+            PC_SEL_FE_IN       => PC_SEL_FE_IN,
             -- Program counter branch address in fetch stage
-            PC_BRANCH_FE_IN => PC_BRANCH_FE_IN,
-            -- Program counter output
-            PC_PLUS4_FE_OUT => i_cache_ptr_s
-            );
+            PC_BRANCH_FE_IN    => PC_BRANCH_FE_IN,
+            -- Program counter output to decode stage
+            PC_PLUS4_FE_OUT    => PC_PLUS4_FE_OUT,
+            -- Program counter output cache memory
+            I_CACHE_PTR_FE_OUT => i_cache_ptr_s
+        );
 
     instruction_cache: I_Cache
         generic map (

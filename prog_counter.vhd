@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-08-30
+-- Last update: 2016-09-03
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -63,13 +63,13 @@ entity prog_counter is
         RST_IN : in std_logic;
 
         -- Program counter select in fetch stage
-        PC_SEL_FE_IN    : in std_logic;
+        PC_SEL_FE_IN       : in std_logic;
         -- Program counter branch address in fetch stage
-        PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
-        
+        PC_BRANCH_FE_IN    : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+        I_CACHE_PTR_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0);
         -- Program counter output
-        PC_PLUS4_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0)
-        );
+        PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0)
+    );
 end prog_counter;
 
 
@@ -104,15 +104,19 @@ begin
     pc_incr_PROC : process(CLK_IN)
     begin
         if (RST_IN = '1') then
-            PC_PLUS4_FE_OUT <= x"00000000";
-            pc_out_s <= x"00000000";
+            PC_PLUS4_FE_OUT    <= x"00000000";
+            I_CACHE_PTR_FE_OUT <= x"00000000";
+            pc_out_s           <= x"00000000";
         elsif (rising_edge(CLK_IN)) then
-            PC_PLUS4_FE_OUT <= pc_out_s;
+            I_CACHE_PTR_FE_OUT <= pc_out_s;
+            PC_PLUS4_FE_OUT    <=unsigned(pc_out_s);
+            
             if (PC_SEL_FE_IN = '0') then
                 pc_out_s <= std_logic_vector(unsigned(pc_out_s) + 4);
             elsif (PC_SEL_FE_IN = '1') then
                 pc_out_s <= PC_BRANCH_FE_IN;
             end if;
+            
         end if;
     end process;
 
