@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-08-30
+-- Last update: 2016-09-03
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -66,7 +66,8 @@ entity instr_fetch is
         -- Program counter branch address in fetch stage
         PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
 
-        CACHE_INSTR_DEC_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0)
+        -- Instruction to be executed by the rest of the pipeline
+        CACHE_INSTR_FE_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0)
     );
 end instr_fetch;
 
@@ -169,7 +170,7 @@ begin
             I_CACHE_PTR_IN => i_cache_ptr_s,
 
             -- Instruction that cache outputs depending on the pointer
-            CACHE_INSTR_OUT => CACHE_INSTR_DEC_OUT
+            CACHE_INSTR_OUT => CACHE_INSTR_FE_OUT
         );
 
     
