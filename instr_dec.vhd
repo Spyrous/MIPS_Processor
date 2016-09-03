@@ -157,7 +157,22 @@ begin
     -- Where to branch to relative to the current program counter
     PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
 
+    -- Opcode is decoded by all types of instructions
+    OPCODE_OUT <= INSTR_TBD_IN(31 downto 26);
+    
+    -- R-Type decoded signals
+    RD_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(15 downto 11))));
+    SHAMT_OUT  <= INSTR_TBD_IN(10 downto 6);
+    FUNCT_OUT  <= INSTR_TBD_IN(5  downto 0);
 
+    -- R-Type and I-Type decoded signals
+    RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
+    RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
+
+    -- I-Type immediate decoded field
+    IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
+
+    
     
     -----------------------------------------------------------------
     --                   Instruction Decode                 
@@ -191,15 +206,7 @@ begin
             
             case (opcode_s) is
                 -- If instruction R-Type decode the following fields
-                when R_TYPE_OP =>             
-                    OPCODE_OUT <= INSTR_TBD_IN(31 downto 26);
-                    RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
-                    RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
-                    RD_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(15 downto 11))));
-                    SHAMT_OUT  <= INSTR_TBD_IN(10 downto 6);
-                    FUNCT_OUT  <= INSTR_TBD_IN(5  downto 0);
-
-
+                when R_TYPE_OP =>                                 
                     -- Control signal configuration for R-Type
                     REG_WRITE_DEC_OUT  <= '1';
                     MEM_TO_REG_DEC_OUT <= '0';
@@ -210,15 +217,10 @@ begin
                         
                 -- If instruction is I-Type decode the following fields
                 when ADDI_OP|ANDI_OP =>                    
-                    OPCODE_OUT <= opcode_s;
-                    RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
-                    RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
-                    IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
+                    
 
                 when BEQ_OP =>
-                    OPCODE_OUT <= opcode_s;
-                    RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
-                    RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
+                    
 
                     
                 when others =>
