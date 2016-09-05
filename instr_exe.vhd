@@ -105,9 +105,9 @@ entity instr_exe is
 
         
         -- RS (Source Operand)
-        RS_EXE_VAL_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        RS_VAL_EXE_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
-        RT_EXE_VAL_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        RT_VAL_EXE_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- Shift Amount
         SHAMT_EXE_IN   : in std_logic_vector(4 downto 0);
         -- Function to be executed if instruction is R-Type

@@ -119,9 +119,9 @@ entity instr_dec is
 
         -- Registers used for execution
         -- RS (Source Operand)
-        RS_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        RS_VAL_DEC_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
-        RT_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);        
+        RT_VAL_DEC_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);        
         
         -- Shift Amount
         SHAMT_DEC_OUT  : out std_logic_vector(4 downto 0);
