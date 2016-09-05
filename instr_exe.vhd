@@ -64,7 +64,7 @@ entity instr_exe is
         RST_IN : in std_logic;
 
         -- Opcode to be decoded from first 6 bits of the instruction
-        OPCODE_IN : in std_logic_vector(5 downto 0);
+        OPCODE_EXE_IN : in std_logic_vector(5 downto 0);
 
 
         ----------------------------------------------
