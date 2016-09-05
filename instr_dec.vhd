@@ -121,9 +121,7 @@ entity instr_dec is
         -- RS (Source Operand)
         RS_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
-        RT_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
-        -- RD (Destination Operand)
-        RD_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        RT_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);        
         
         -- Shift Amount
         SHAMT_DEC_OUT  : out std_logic_vector(4 downto 0);
