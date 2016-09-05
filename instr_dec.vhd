@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-04
+-- Last update: 2016-09-05
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -74,7 +74,12 @@ entity instr_dec is
         PC_SEL_DEC_OUT    : out std_logic;
         -- Program counter branch address forwarded to fetch stage
         PC_BRANCH_DEC_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
-        
+
+
+
+        -----------------------------------------
+        -- Signals Received from Writeback Stage
+        -----------------------------------------
         -- Determines the data to be written in the register specified by
         -- the writeback stage
         WB_TO_DEC_DATA_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
@@ -110,22 +115,22 @@ entity instr_dec is
 
         
         -- Instruction opcode used for execution stage
-        OPCODE_OUT : out std_logic_vector(5 downto 0);
+        OPCODE_DEC_OUT : out std_logic_vector(5 downto 0);
 
         -- Registers used for execution
         -- RS (Source Operand)
-        RS_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        RS_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
-        RT_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        RT_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RD (Destination Operand)
-        RD_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        RD_DEC_VAL_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
         
         -- Shift Amount
-        SHAMT_OUT  : out std_logic_vector(4 downto 0);
+        SHAMT_DEC_OUT  : out std_logic_vector(4 downto 0);
         -- Function to be executed if instruction is R-Type
-        FUNCT_OUT  : out std_logic_vector(5 downto 0);
+        FUNCT_DEC_OUT  : out std_logic_vector(5 downto 0);
         -- Immediate Operand if instruction is I-Type
-        IMM_OUT    : out std_logic_vector(31 downto 0)
+        IMM_DEC_OUT    : out std_logic_vector(DATA_WIDTH-1 downto 0)
     );
 end instr_dec;
 
