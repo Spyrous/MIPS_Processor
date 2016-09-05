@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-08-31
+-- Last update: 2016-09-05
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -105,15 +105,15 @@ entity instr_exe is
 
         
         -- RS (Source Operand)
-        RS_IN     : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        RS_EXE_VAL_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
-        RT_IN     : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        RT_EXE_VAL_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- Shift Amount
-        SHAMT_IN  : in std_logic_vector(4 downto 0);
+        SHAMT_EXE_IN   : in std_logic_vector(4 downto 0);
         -- Function to be executed if instruction is R-Type
-        FUNCT_IN  : in std_logic_vector(5 downto 0);
+        FUNCT_EXE_IN   : in std_logic_vector(5 downto 0);
         -- Immediate Operand if instruction is I-Type
-        IMM_IN    : in std_logic_vector(DATA_WIDTH-1 downto 0)
+        IMM_EXE_IN     : in std_logic_vector(DATA_WIDTH-1 downto 0)
 
 );
 end instr_exe;
