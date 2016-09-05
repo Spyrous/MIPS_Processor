@@ -111,18 +111,29 @@ entity instr_dec is
         -- either RS register or RT
         REG_DST_DEC_OUT    : out std_logic;
 
-
-
+        
+        -- Decoded register number (0-31) of RT and RD
+        -- Used for writeback stage to write to a register
+        -- The result of writeback will go either to RT or RD
+        -- depending on the instruction decoded
+        RT_NUM_DEC_OUT     : out std_logic_vector(4 downto 0);
+        RD_NUM_DEC_OUT     : out std_logic_vector(4 downto 0);
         
         -- Instruction opcode used for execution stage
         OPCODE_DEC_OUT : out std_logic_vector(5 downto 0);
 
-        -- Registers used for execution
+        ---------------------------------------------------------
+        -- Register values used in the ALU at execution stage
+        ---------------------------------------------------------
         -- RS (Source Operand)
         RS_VAL_DEC_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
         RT_VAL_DEC_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);        
+
         
+        ---------------------------------------------------------
+        -- Signals used at the ALU of the execution stage
+        ---------------------------------------------------------        
         -- Shift Amount
         SHAMT_DEC_OUT  : out std_logic_vector(4 downto 0);
         -- Function to be executed if instruction is R-Type
