@@ -103,11 +103,26 @@ entity instr_exe is
         -- Controls reads or writes at memory stage
         MEM_WRITE_EXE_OUT  : out std_logic;
 
-        
+
+        ------------------------------------------------
+        -- Registers values and numbers received from
+        -- decode stage
+        ------------------------------------------------ 
+        -- Decoded register number (0-31) of RT and RD
+        -- Used for writeback stage to write to a register
+        -- The result of writeback will go either to RT or RD
+        -- depending on the instruction decoded
+        RT_NUM_EXE_IN  : in std_logic_vector(4 downto 0);
+        RD_NUM_EXE_IN  : in std_logic_vector(4 downto 0);
         -- RS (Source Operand)
         RS_VAL_EXE_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- RT (Second Operand)
         RT_VAL_EXE_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        
+        ------------------------------------------------
+        -- Signals received from decoded stage they are
+        -- used at the ALU of the execution stage
+        ------------------------------------------------  
         -- Shift Amount
         SHAMT_EXE_IN   : in std_logic_vector(4 downto 0);
         -- Function to be executed if instruction is R-Type
