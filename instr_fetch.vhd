@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-03
+-- Last update: 2016-09-04
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ entity instr_fetch is
         -- Program counter select in fetch stage
         PC_SEL_FE_IN    : in std_logic;
         -- Program counter branch address in fetch stage
-        PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+        PC_BRANCH_FE_IN : in unsigned(ADDR_WIDTH-1 downto 0);
         -- Program counter output to decode stage
         PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0);
         -- Instruction to be executed by the rest of the pipeline
@@ -83,7 +83,7 @@ architecture Structural of instr_fetch is
     -- Signals                                                       --
     -------------------------------------------------------------------
     -- Connects the output of program counter to the input of I_Cache
-    signal i_cache_ptr_s : std_logic_vector(ADDR_WIDTH-1 downto 0);
+    signal i_cache_ptr_s : unsigned(ADDR_WIDTH-1 downto 0);
 
 
 
@@ -105,9 +105,9 @@ architecture Structural of instr_fetch is
             -- Program counter select in fetch stage
             PC_SEL_FE_IN    : in std_logic;
             -- Program counter branch address in fetch stage
-            PC_BRANCH_FE_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+            PC_BRANCH_FE_IN : in unsigned(ADDR_WIDTH-1 downto 0);
             -- Program counter pointer to instruction cache memory
-            I_CACHE_PTR_FE_OUT : out std_logic_vector(ADDR_WIDTH-1 downto 0);
+            I_CACHE_PTR_FE_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
             -- Program counter output to decode stage
             PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0)
             
@@ -125,7 +125,7 @@ architecture Structural of instr_fetch is
             RST_IN : in std_logic;
 
             -- This pointer comes from the program counter and points in our memory
-            I_CACHE_PTR_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+            I_CACHE_PTR_IN : in unsigned(ADDR_WIDTH-1 downto 0);
 
             -- Instruction that cache outputs depending on the pointer
             CACHE_INSTR_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0) 

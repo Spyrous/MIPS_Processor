@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-03
+-- Last update: 2016-09-04
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -173,6 +173,7 @@ begin
     IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
 
     
+    opcode_s <= INSTR_TBD_IN(31 downto 26);
     
     -----------------------------------------------------------------
     --                   Instruction Decode                 
@@ -189,10 +190,9 @@ begin
             reg_file_s <= (0 => x"11111111",
                            others => (others => '0'));
             signed_imm_s <= (others => '0');
-            
+            PC_SEL_DEC_OUT <= '0';
         elsif (rising_edge(CLK_IN)) then
            
-            opcode_s <= INSTR_TBD_IN(31 downto 26);
 
             -- If the MSB (Most Significant Bit) of our immediate field is '0' we extend
             -- with zeroes if it's '1' we extend ones
@@ -212,7 +212,7 @@ begin
                     MEM_TO_REG_DEC_OUT <= '0';
                     MEM_WRITE_DEC_OUT  <= '0';
                     ALU_SRC_DEC_OUT    <= '0';
-                    
+                    PC_SEL_DEC_OUT     <= '0';
                         
                         
                 -- If instruction is I-Type decode the following fields
@@ -220,7 +220,13 @@ begin
                     
 
                 when BEQ_OP =>
-                    
+                    -- If RS = RT then branch else PC + 4
+                    if ( reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21)))) =
+                         reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16)))) ) then
+                        PC_SEL_DEC_OUT <= '1';
+                    else
+                        PC_SEL_DEC_OUT <= '0';
+                    end if;
 
                     
                 when others =>

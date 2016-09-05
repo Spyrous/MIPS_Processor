@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-08-30
+-- Last update: 2016-09-05
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ entity I_Cache is
         RST_IN : in std_logic;
 
         -- This pointer comes from the program counter and points in our memory
-        I_CACHE_PTR_IN : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+        I_CACHE_PTR_IN : in unsigned(ADDR_WIDTH-1 downto 0);
 
         -- Instruction that cache outputs depending on the pointer
         CACHE_INSTR_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0) 
@@ -86,14 +86,15 @@ architecture Behavioral of I_Cache is
 --*******************************************************************--
 begin
 
-    process(I_CACHE_PTR_IN)
+    process(I_CACHE_PTR_IN, RST_IN)
     begin
         if (RST_IN = '1') then
-            INSTR_CACHE <= (4 => x"00001111",
+            INSTR_CACHE <= (4 => x"10000010",
+                            8 => x"10000100",
                 others => (others =>'0'));
             CACHE_INSTR_OUT <= x"00000000";
         else            
-            CACHE_INSTR_OUT <= INSTR_CACHE(to_integer(unsigned(I_CACHE_PTR_IN) srl 2));
+            CACHE_INSTR_OUT <= INSTR_CACHE(to_integer(I_CACHE_PTR_IN));
         end if;
     end process;
     
