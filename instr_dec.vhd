@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-05
+-- Last update: 2016-09-07
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -172,19 +172,18 @@ begin
     PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
 
     -- Opcode is decoded by all types of instructions
-    OPCODE_OUT <= INSTR_TBD_IN(31 downto 26);
+    OPCODE_OUT        <= INSTR_TBD_IN(31 downto 26);
     
     -- R-Type decoded signals
-    RD_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(15 downto 11))));
-    SHAMT_OUT  <= INSTR_TBD_IN(10 downto 6);
-    FUNCT_OUT  <= INSTR_TBD_IN(5  downto 0);
+    SHAMT_OUT         <= INSTR_TBD_IN(10 downto 6);
+    FUNCT_OUT         <= INSTR_TBD_IN(5  downto 0);
 
     -- R-Type and I-Type decoded signals
-    RS_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
-    RT_OUT     <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
+    RS_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
+    RT_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
 
     -- I-Type immediate decoded field
-    IMM_OUT    <= x"0000" & INSTR_TBD_IN(15 downto 0);
+    IMM_DEC_OUT       <= x"0000" & INSTR_TBD_IN(15 downto 0);
 
     
     opcode_s <= INSTR_TBD_IN(31 downto 26);
