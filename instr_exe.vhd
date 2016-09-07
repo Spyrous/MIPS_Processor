@@ -179,32 +179,32 @@ begin
                 case FUNCT_EXE_IN is
                     -- Arithmetic Operations
                     when ADD_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RS_IN) + unsigned(RT_IN));
+                        alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) + unsigned(RT_VAL_EXE_IN));
                     when ADDU_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RS_IN) + unsigned(RT_IN));
+                        alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) + unsigned(RT_VAL_EXE_IN));
                     when SUB_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RS_IN) - unsigned(RT_IN));
+                        alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) - unsigned(RT_VAL_EXE_IN));
                     when SUBU_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RS_IN) - unsigned(RT_IN));
+                        alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) - unsigned(RT_VAL_EXE_IN));
                     -- Logic Operations
                     when AND_OP =>
-                        alu_res_s <= RS_IN and RT_IN;
+                        alu_res_s <= RS_VAL_EXE_IN and RT_VAL_EXE_IN;
                     when OR_OP =>
-                        alu_res_s <= RS_IN or RT_IN;
+                        alu_res_s <= RS_VAL_EXE_IN or RT_VAL_EXE_IN;
                     when XOR_OP =>
-                        alu_res_s <= RS_IN xor RT_IN;
+                        alu_res_s <= RS_VAL_EXE_IN xor RT_VAL_EXE_IN;
                     when NOR_OP =>
-                        alu_res_s <= RS_IN nor RT_IN;
+                        alu_res_s <= RS_VAL_EXE_IN nor RT_VAL_EXE_IN;
                     -- Shift Left Operations
                     when SLL_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RT_IN) sll to_integer(unsigned(SHAMT_EXE_IN)));
+                        alu_res_s <= std_logic_vector(unsigned(RT_VAL_EXE_IN) sll to_integer(unsigned(SHAMT_EXE_IN)));
                     when SLLV_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RT_IN) sll to_integer(unsigned(RS_IN(4 downto 0))));
+                        alu_res_s <= std_logic_vector(unsigned(RT_VAL_EXE_IN) sll to_integer(unsigned(RS_VAL_EXE_IN(4 downto 0))));
                     -- Shift Right Operations
                     when SRL_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RT_IN) srl to_integer(unsigned(SHAMT_EXE_IN)));
+                        alu_res_s <= std_logic_vector(unsigned(RT_VAL_EXE_IN) srl to_integer(unsigned(SHAMT_EXE_IN)));
                     when SRLV_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RT_IN) srl to_integer(unsigned(RS_IN(4 downto 0))));
+                        alu_res_s <= std_logic_vector(unsigned(RT_VAL_EXE_IN) srl to_integer(unsigned(RS_VAL_EXE_IN(4 downto 0))));
                     when SRA_OP =>
                         
                     when SRAV_OP =>
@@ -212,13 +212,13 @@ begin
                         
                     -- Set on Less Than Operations
                     when SLT_OP =>
-                        if (signed(RS_IN) < signed(RT_IN)) then
+                        if (signed(RS_VAL_EXE_IN) < signed(RT_VAL_EXE_IN)) then
                             alu_res_s <= x"00000001";
                         else
                             alu_res_s <= x"00000000";
                         end if;
                     when SLTU_OP =>
-                        if (unsigned(RS_IN) < unsigned(RT_IN)) then
+                        if (unsigned(RS_VAL_EXE_IN) < unsigned(RT_VAL_EXE_IN)) then
                             alu_res_s <= x"00000001";
                         else
                             alu_res_s <= x"00000000";
@@ -233,19 +233,19 @@ begin
         -- the appropriate operation (I-Type or J-Type)
             case OPCODE_IN is
                 when ADDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
                 when ADDIU_OP =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
                 when ANDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) and unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) and unsigned(IMM_EXE_IN));
                 when ORI_OP   =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) or  unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) or  unsigned(IMM_EXE_IN));
                 when XORI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) xor unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN) xor unsigned(IMM_EXE_IN));
                 when LW_OP    =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
                 when SW_OP    =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
                 when others =>
 
             end case;
