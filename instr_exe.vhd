@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-05
+-- Last update: 2016-09-07
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ begin
             -- If the opcode is of type R then check the
             -- funct field to execute an operation
             if (OPCODE_IN = R_TYPE_OP) then
-                case FUNCT_IN is
+                case FUNCT_EXE_IN is
                     -- Arithmetic Operations
                     when ADD_OP =>
                         alu_res_s <= std_logic_vector(unsigned(RS_IN) + unsigned(RT_IN));
@@ -197,12 +197,12 @@ begin
                         alu_res_s <= RS_IN nor RT_IN;
                     -- Shift Left Operations
                     when SLL_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RT_IN) sll to_integer(unsigned(SHAMT_IN)));
+                        alu_res_s <= std_logic_vector(unsigned(RT_IN) sll to_integer(unsigned(SHAMT_EXE_IN)));
                     when SLLV_OP =>
                         alu_res_s <= std_logic_vector(unsigned(RT_IN) sll to_integer(unsigned(RS_IN(4 downto 0))));
                     -- Shift Right Operations
                     when SRL_OP =>
-                        alu_res_s <= std_logic_vector(unsigned(RT_IN) srl to_integer(unsigned(SHAMT_IN)));
+                        alu_res_s <= std_logic_vector(unsigned(RT_IN) srl to_integer(unsigned(SHAMT_EXE_IN)));
                     when SRLV_OP =>
                         alu_res_s <= std_logic_vector(unsigned(RT_IN) srl to_integer(unsigned(RS_IN(4 downto 0))));
                     when SRA_OP =>
@@ -233,19 +233,19 @@ begin
         -- the appropriate operation (I-Type or J-Type)
             case OPCODE_IN is
                 when ADDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
                 when ADDIU_OP =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
                 when ANDI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) and unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) and unsigned(IMM_EXE_IN));
                 when ORI_OP   =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) or  unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) or  unsigned(IMM_EXE_IN));
                 when XORI_OP  =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN) xor unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN) xor unsigned(IMM_EXE_IN));
                 when LW_OP    =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
                 when SW_OP    =>
-                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_IN));
+                    alu_res_s <= std_logic_vector(unsigned(RS_IN)  +  unsigned(IMM_EXE_IN));
                 when others =>
 
             end case;
