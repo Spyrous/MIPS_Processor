@@ -185,6 +185,9 @@ begin
     -- I-Type immediate decoded field
     IMM_DEC_OUT       <= x"0000" & INSTR_TBD_IN(15 downto 0);
 
+    -- Destination number register
+    RT_NUM_DEC_OUT    <= INSTR_TBD_IN(25 downto 21);
+    RD_NUM_DEC_OUT    <= INSTR_TBD_IN(20 downto 16);
     
     opcode_s <= INSTR_TBD_IN(31 downto 26);
     
