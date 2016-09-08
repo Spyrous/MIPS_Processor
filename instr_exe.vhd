@@ -175,7 +175,7 @@ begin
         elsif (rising_edge(CLK_IN)) then
             -- If the opcode is of type R then check the
             -- funct field to execute an operation
-            if (OPCODE_IN = R_TYPE_OP) then
+            if (OPCODE_EXE_IN = R_TYPE_OP) then
                 case FUNCT_EXE_IN is
                     -- Arithmetic Operations
                     when ADD_OP =>
@@ -231,7 +231,7 @@ begin
             end if;
         -- If it's not R-Type use the opcode to execute
         -- the appropriate operation (I-Type or J-Type)
-            case OPCODE_IN is
+            case OPCODE_EXE_IN is
                 when ADDI_OP  =>
                     alu_res_s <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
                 when ADDIU_OP =>
