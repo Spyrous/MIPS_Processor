@@ -171,6 +171,7 @@ begin
     -- Where to branch to relative to the current program counter
     PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
 
+    -- Forward pc + 4 to the execute stage
     PC_PLUS4_DEC_OUT  <= PC_PLUS4_DEC_IN;
     
     -- Opcode is decoded by all types of instructions
@@ -185,7 +186,7 @@ begin
     RT_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
 
     -- I-Type immediate decoded field
-    IMM_DEC_OUT       <= x"0000" & INSTR_TBD_IN(15 downto 0);
+    IMM_DEC_OUT       <= signed_imm_s;
 
     -- Destination number register
     RT_NUM_DEC_OUT    <= INSTR_TBD_IN(25 downto 21);
