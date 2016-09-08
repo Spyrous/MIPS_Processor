@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-07
+-- Last update: 2016-09-08
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ entity instr_dec is
         -- either RS register or RT
         REG_DST_DEC_OUT    : out std_logic;
 
-        
+        PC_PLUS4_DEC_OUT   : out unsigned(ADDR_WIDTH-1 downto 0);
         -- Decoded register number (0-31) of RT and RD
         -- Used for writeback stage to write to a register
         -- The result of writeback will go either to RT or RD
@@ -171,12 +171,14 @@ begin
     -- Where to branch to relative to the current program counter
     PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
 
+    PC_PLUS4_DEC_OUT  <= PC_PLUS4_DEC_IN;
+    
     -- Opcode is decoded by all types of instructions
-    OPCODE_OUT        <= INSTR_TBD_IN(31 downto 26);
+    OPCODE_DEC_OUT    <= INSTR_TBD_IN(31 downto 26);
     
     -- R-Type decoded signals
-    SHAMT_OUT         <= INSTR_TBD_IN(10 downto 6);
-    FUNCT_OUT         <= INSTR_TBD_IN(5  downto 0);
+    SHAMT_DEC_OUT     <= INSTR_TBD_IN(10 downto 6);
+    FUNCT_DEC_OUT     <= INSTR_TBD_IN(5  downto 0);
 
     -- R-Type and I-Type decoded signals
     RS_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
@@ -190,6 +192,7 @@ begin
     RD_NUM_DEC_OUT    <= INSTR_TBD_IN(20 downto 16);
     
     opcode_s <= INSTR_TBD_IN(31 downto 26);
+
     
     -----------------------------------------------------------------
     --                   Instruction Decode                 
