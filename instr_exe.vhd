@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-07
+-- Last update: 2016-09-08
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -83,15 +83,10 @@ entity instr_exe is
         -- Controls where the results from writeback stage go
         -- either RS register or RT
         REG_DST_EXE_IN    : in std_logic;
-
-        ----------------------------------------
-        -- Control Signals Sent to Fetch Stage
-        ----------------------------------------
-        -- Program counter select in fetch stage
-        PC_SEL_EXE_OUT     : out std_logic;
-        -- Program counter branch address in fetch stage
-        PC_BRANCH_EXE_OUT  : out std_logic_vector(ADDR_WIDTH-1 downto 0);
+        -- Program counter from fetch stage
+        PC_PLUS4_EXE_IN   : in std_logic_vector(ADDR_WIDTH-1 downto 0);
         
+                   
         ----------------------------------------
         -- Control Signals Sent to Memory Stage
         ----------------------------------------
@@ -102,7 +97,11 @@ entity instr_exe is
         MEM_TO_REG_EXE_OUT : out std_logic;
         -- Controls reads or writes at memory stage
         MEM_WRITE_EXE_OUT  : out std_logic;
-
+        -- Program counter select in fetch stage
+        PC_SEL_EXE_OUT     : out std_logic;
+        -- Program counter branch address in fetch stage
+        PC_BRANCH_EXE_OUT  : out std_logic_vector(ADDR_WIDTH-1 downto 0);
+        
 
         ------------------------------------------------
         -- Registers values and numbers received from
