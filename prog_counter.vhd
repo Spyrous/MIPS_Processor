@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-09-04
+-- Last update: 2016-09-10
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -102,12 +102,11 @@ begin
     --       The output points to the address of the instruction 
     --       memory to be fetched.                               
     ---------------------------------------------------------------
-    pc_incr_PROC : process(CLK_IN)
+    pc_incr_PROC : process(CLK_IN, RST_IN)
     begin
         if (RST_IN = '1') then           
             pc_out_s           <= x"00000000";
         elsif (rising_edge(CLK_IN)) then
-            
             
             if (PC_SEL_FE_IN = '0') then
                 pc_out_s <= pc_out_s + 4;
