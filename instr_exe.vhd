@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-09
+-- Last update: 2016-09-10
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ entity instr_exe is
         -- either RS register or RT
         REG_DST_EXE_IN    : in std_logic;
         -- Program counter from fetch stage
-        PC_PLUS4_EXE_IN   : in std_logic_vector(ADDR_WIDTH-1 downto 0);
+        PC_PLUS4_EXE_IN   : in unsigned(ADDR_WIDTH-1 downto 0);
         
                    
         ----------------------------------------
@@ -101,7 +101,8 @@ entity instr_exe is
         PC_SEL_EXE_OUT     : out std_logic;
         -- Program counter branch address forwarded to fetch stage
         PC_BRANCH_EXE_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
-
+        
+    
         ------------------------------------------------
         -- Registers values and numbers received from
         -- decode stage
@@ -157,7 +158,7 @@ begin
     MEM_TO_REG_EXE_OUT <= MEM_TO_REG_EXE_IN;
     MEM_WRITE_EXE_OUT  <= MEM_WRITE_EXE_IN;
 
-    PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN(31 downto 18) + IMM_EXE_IN(15 downto 0) & "00";   
+    PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN(31 downto 18) + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
     -----------------------------------------------------------------
     --                   Instruction Execute                 
     --                                                           
@@ -248,10 +249,10 @@ begin
                     -- If RS = RT 
                     if ( RS_VAL_EXE_IN = RT_VAL_EXE_IN ) then
                         -- Branch
-                        PC_SEL_DEC_OUT <= '1';
+                        PC_SEL_EXE_OUT <= '1';
                     else
                         -- PC + 4
-                        PC_SEL_DEC_OUT <= '0';
+                        PC_SEL_EXE_OUT <= '0';
                     end if;
                 when others =>
 
