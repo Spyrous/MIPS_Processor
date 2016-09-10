@@ -158,7 +158,7 @@ begin
     MEM_TO_REG_EXE_OUT <= MEM_TO_REG_EXE_IN;
     MEM_WRITE_EXE_OUT  <= MEM_WRITE_EXE_IN;
 
-    PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN(31 downto 18) + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
+    PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
     -----------------------------------------------------------------
     --                   Instruction Execute                 
     --                                                           
