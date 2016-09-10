@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-08
+-- Last update: 2016-09-09
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -240,13 +240,6 @@ begin
                     
 
                 when BEQ_OP =>
-                    -- If RS = RT then branch else PC + 4
-                    if ( reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21)))) =
-                         reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16)))) ) then
-                        PC_SEL_DEC_OUT <= '1';
-                    else
-                        PC_SEL_DEC_OUT <= '0';
-                    end if;
 
                     
                 when others =>
