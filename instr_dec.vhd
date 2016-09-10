@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-09
+-- Last update: 2016-09-10
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -71,10 +71,7 @@ entity instr_dec is
         -- Program counter from fetch stage
         PC_PLUS4_DEC_IN   : in unsigned(ADDR_WIDTH-1 downto 0);
         -- Program counter select signal for fetch stage
-        PC_SEL_DEC_OUT    : out std_logic;
-        -- Program counter branch address forwarded to fetch stage
-        PC_BRANCH_DEC_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
-
+        PC_SEL_DEC_OUT    : out std_logic;        
 
 
         -----------------------------------------
@@ -168,9 +165,6 @@ signal signed_imm_s : std_logic_vector(DATA_WIDTH-1 downto 0);
 --*******************************************************************--    
 begin
     
-    -- Where to branch to relative to the current program counter
-    PC_BRANCH_DEC_OUT <= PC_PLUS4_DEC_IN + to_integer(unsigned(signed_imm_s));
-
     -- Forward pc + 4 to the execute stage
     PC_PLUS4_DEC_OUT  <= PC_PLUS4_DEC_IN;
     
@@ -233,11 +227,11 @@ begin
                     MEM_WRITE_DEC_OUT  <= '0';
                     ALU_SRC_DEC_OUT    <= '0';
                     PC_SEL_DEC_OUT     <= '0';
-                        
+                    REG_DST_DEC_OUT    <= '1';
                         
                 -- If instruction is I-Type decode the following fields
                 when ADDI_OP|ANDI_OP =>                    
-                    
+                    REG_DST_DEC_OUT    <= '0';
 
                 when BEQ_OP =>
 
