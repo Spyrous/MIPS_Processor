@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-10
+-- Last update: 2016-09-12
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -182,10 +182,12 @@ begin
     begin
         if (RST_IN = '1') then
             -- Set all 32 registers to 0 except register 0 which is initiated to hex 11111111
-            reg_file_s <= (0 => x"11111111",
-                           others => (others => '0'));
-            signed_imm_s <= (others => '0');
-            PC_SEL_DEC_OUT <= '0';
+            reg_file_s       <= (0 => x"11111111",
+                                 others => (others => '0'));
+            signed_imm_s     <= (others => '0');
+            PC_SEL_DEC_OUT   <= '0';
+            IMM_DEC_OUT      <= (others => '0');
+            PC_PLUS4_DEC_OUT <= (others => '0');
         elsif (rising_edge(CLK_IN)) then
            
             -- Forward pc + 4 to the execute stage
