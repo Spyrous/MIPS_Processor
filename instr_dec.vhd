@@ -165,26 +165,7 @@ signal signed_imm_s : std_logic_vector(DATA_WIDTH-1 downto 0);
 --*******************************************************************--    
 begin
     
-    -- Forward pc + 4 to the execute stage
-    PC_PLUS4_DEC_OUT  <= PC_PLUS4_DEC_IN;
     
-    -- Opcode is decoded by all types of instructions
-    OPCODE_DEC_OUT    <= INSTR_TBD_IN(31 downto 26);
-    
-    -- R-Type decoded signals
-    SHAMT_DEC_OUT     <= INSTR_TBD_IN(10 downto 6);
-    FUNCT_DEC_OUT     <= INSTR_TBD_IN(5  downto 0);
-
-    -- R-Type and I-Type decoded signals
-    RS_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
-    RT_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
-
-    -- I-Type immediate decoded field
-    IMM_DEC_OUT       <= signed_imm_s;
-
-    -- Destination number register
-    RT_NUM_DEC_OUT    <= INSTR_TBD_IN(25 downto 21);
-    RD_NUM_DEC_OUT    <= INSTR_TBD_IN(20 downto 16);
     
     opcode_s <= INSTR_TBD_IN(31 downto 26);
 
@@ -207,7 +188,27 @@ begin
             PC_SEL_DEC_OUT <= '0';
         elsif (rising_edge(CLK_IN)) then
            
+            -- Forward pc + 4 to the execute stage
+            PC_PLUS4_DEC_OUT  <= PC_PLUS4_DEC_IN;
+            
+            -- Opcode is decoded by all types of instructions
+            OPCODE_DEC_OUT    <= INSTR_TBD_IN(31 downto 26);
+            
+            -- R-Type decoded signals
+            SHAMT_DEC_OUT     <= INSTR_TBD_IN(10 downto 6);
+            FUNCT_DEC_OUT     <= INSTR_TBD_IN(5  downto 0);
 
+            -- R-Type and I-Type decoded signals
+            RS_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
+            RT_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
+
+            -- I-Type immediate decoded field
+            IMM_DEC_OUT       <= signed_imm_s;
+
+            -- Destination number register
+            RT_NUM_DEC_OUT    <= INSTR_TBD_IN(25 downto 21);
+            RD_NUM_DEC_OUT    <= INSTR_TBD_IN(20 downto 16);
+            
             -- If the MSB (Most Significant Bit) of our immediate field is '0' we extend
             -- with zeroes if it's '1' we extend ones
             if (INSTR_TBD_IN(15) = '0') then
