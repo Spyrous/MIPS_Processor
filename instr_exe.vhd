@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-12
+-- Last update: 2016-09-15
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -103,6 +103,10 @@ entity instr_exe is
         PC_BRANCH_EXE_OUT  : out unsigned(ADDR_WIDTH-1 downto 0);
         -- ALU result
         ALU_RES_EXE_OUT    : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        -- Store word instruction write data. It writes the contents of
+        -- RT register at the memory stage if instruction is store word (SW)
+        WRITE_DATA_EXE_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0);
+
         
         ------------------------------------------------
         -- Registers values and numbers received from
@@ -173,7 +177,7 @@ begin
             REG_WRITE_EXE_OUT  <= REG_WRITE_EXE_IN;
             MEM_TO_REG_EXE_OUT <= MEM_TO_REG_EXE_IN;
             MEM_WRITE_EXE_OUT  <= MEM_WRITE_EXE_IN;
-
+            WRITE_DATA_EXE_OUT <= RT_VAL_EXE_IN;
             PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
 
             
