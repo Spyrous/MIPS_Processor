@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-15
+-- Last update: 2016-09-17
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -166,12 +166,16 @@ begin
     --       fields. Also consumes some of the control signals and 
     --       generates results for the memory stage.
     -----------------------------------------------------------------
-    instr_exe_PROC: process(CLK_IN)
+    instr_exe_PROC: process(CLK_IN, RST_IN)
     begin
         if (RST_IN = '1') then
-            ALU_RES_EXE_OUT   <= (others => '0');
-            PC_BRANCH_EXE_OUT <= (others => '0');
-                
+            ALU_RES_EXE_OUT    <= (others => '0');
+            PC_BRANCH_EXE_OUT  <= (others => '0');
+            REG_WRITE_EXE_OUT  <= '0';
+            MEM_TO_REG_EXE_OUT <= '0';
+            MEM_WRITE_EXE_OUT  <= '0';
+            WRITE_DATA_EXE_OUT <= (others => '0');           
+            
         elsif (rising_edge(CLK_IN)) then
             -- Signals forwarded to memory stage
             REG_WRITE_EXE_OUT  <= REG_WRITE_EXE_IN;
