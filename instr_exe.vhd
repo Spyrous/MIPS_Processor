@@ -175,6 +175,7 @@ begin
             MEM_TO_REG_EXE_OUT <= '0';
             MEM_WRITE_EXE_OUT  <= '0';
             WRITE_DATA_EXE_OUT <= (others => '0');           
+            PC_SEL_EXE_OUT     <= '0';
             
         elsif (rising_edge(CLK_IN)) then
             -- Signals forwarded to memory stage
