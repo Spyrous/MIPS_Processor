@@ -87,7 +87,9 @@ entity instr_exe is
         REG_DST_EXE_IN    : in std_logic;
         -- Program counter from fetch stage
         PC_PLUS4_EXE_IN   : in unsigned(ADDR_WIDTH-1 downto 0);
-        
+        -- Determines which of the 32 registers
+        -- will be written after writeback stage
+        WRITE_REG_EXE_IN  : in std_logic_vector(4 downto 0);
                    
         ----------------------------------------
         -- Control Signals Sent to Memory Stage
@@ -110,7 +112,10 @@ entity instr_exe is
         -- Store word instruction write data. It writes the contents of
         -- RT register at the memory stage if instruction is store word (SW)
         WRITE_DATA_EXE_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0);
-
+        -- Determines which of the 32 registers
+        -- will be written after writeback stage
+        WRITE_REG_EXE_OUT  : out std_logic_vector(4 downto 0);
+                   
         
         ------------------------------------------------
         -- Registers values and numbers received from
@@ -189,7 +194,7 @@ begin
             WRITE_DATA_EXE_OUT <= RT_VAL_EXE_IN;
             PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
             MEM_READ_EXE_OUT   <= MEM_READ_EXE_IN;
-            
+            WRITE_REG_EXE_OUT  <= WRITE_REG_EXE_IN;
             -- If the opcode is of type R then check the
             -- funct field to execute an operation
             if (OPCODE_EXE_IN = R_TYPE_OP) then

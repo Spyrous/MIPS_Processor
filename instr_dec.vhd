@@ -110,6 +110,10 @@ entity instr_dec is
         -- either RS register or RT
         REG_DST_DEC_OUT    : out std_logic;
         
+        -- Determines which of the 32 registers
+        -- will be written after writeback stage
+        WRITE_REG_DEC_OUT  : out std_logic_vector(4 downto 0);
+
         PC_PLUS4_DEC_OUT   : out unsigned(ADDR_WIDTH-1 downto 0);
         -- Decoded register number (0-31) of RT and RD
         -- Used for writeback stage to write to a register
