@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-12
+-- Last update: 2016-09-29
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -99,15 +99,17 @@ entity instr_dec is
         -- Chooses between ALU result or memory data
         -- to be written back at registers
         MEM_TO_REG_DEC_OUT : out std_logic;
-        -- Controls reads or writes at memory stage
+        -- Controls writes at memory stage
         MEM_WRITE_DEC_OUT  : out std_logic;
+        -- Controls memory reads at memory stage
+        MEM_READ_DEC_OUT   : out std_logic;
         -- Controls if one of the ALU sources will be a register
         -- or the immidiate field
         ALU_SRC_DEC_OUT    : out std_logic;
         -- Controls where the results from writeback stage go
         -- either RS register or RT
         REG_DST_DEC_OUT    : out std_logic;
-
+        
         PC_PLUS4_DEC_OUT   : out unsigned(ADDR_WIDTH-1 downto 0);
         -- Decoded register number (0-31) of RT and RD
         -- Used for writeback stage to write to a register
@@ -118,7 +120,7 @@ entity instr_dec is
         
         -- Instruction opcode used for execution stage
         OPCODE_DEC_OUT : out std_logic_vector(5 downto 0);
-
+        
         ---------------------------------------------------------
         -- Register values used in the ALU at execution stage
         ---------------------------------------------------------
@@ -182,7 +184,7 @@ begin
     begin
         if (RST_IN = '1') then
             -- Set all 32 registers to 0 except register 0 which is initiated to hex 11111111
-            reg_file_s         <= (0 => x"11111111",
+            reg_file_s         <= (0 => x"00000010",
                                    others => (others => '0'));
             signed_imm_s       <= (others => '0');
             PC_SEL_DEC_OUT     <= '0';
@@ -240,12 +242,13 @@ begin
                     REG_DST_DEC_OUT    <= '1';
                         
                 -- If instruction is I-Type decode the following fields
-                when ADDI_OP|ANDI_OP =>                    
+                when ADDI_OP|ANDI_OP =>
+                    -- Destination register found in Instruction[20-16]
                     REG_DST_DEC_OUT    <= '0';
 
+                    
                 when BEQ_OP =>
 
-                    
                 when others =>
                     
             end case;

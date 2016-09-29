@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-17
+-- Last update: 2016-09-29
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -75,8 +75,10 @@ entity instr_exe is
         -- Chooses between ALU result or memory data
         -- to be written back at registers
         MEM_TO_REG_EXE_IN : in std_logic;
-        -- Controls reads or writes at memory stage
+        -- Controls memory writes at memory stage
         MEM_WRITE_EXE_IN  : in std_logic;
+        -- Controls memory reads at memory stage
+        MEM_READ_EXE_IN   : in std_logic;
         -- Controls if one of the ALU sources will be a register
         -- or the immidiate field
         ALU_SRC_EXE_IN    : in std_logic;
@@ -95,8 +97,10 @@ entity instr_exe is
         -- Chooses between ALU result or memory data
         -- to be written back at registers
         MEM_TO_REG_EXE_OUT : out std_logic;
-        -- Controls reads or writes at memory stage
+        -- Controls memory writes at memory stage
         MEM_WRITE_EXE_OUT  : out std_logic;
+        -- Controls memory reads at memory stage
+        MEM_READ_EXE_OUT   : out std_logic;
         -- Program counter select in fetch stage
         PC_SEL_EXE_OUT     : out std_logic;
         -- Program counter branch address forwarded to fetch stage
@@ -184,7 +188,7 @@ begin
             MEM_WRITE_EXE_OUT  <= MEM_WRITE_EXE_IN;
             WRITE_DATA_EXE_OUT <= RT_VAL_EXE_IN;
             PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
-
+            MEM_READ_EXE_OUT   <= MEM_READ_EXE_IN;
             
             -- If the opcode is of type R then check the
             -- funct field to execute an operation
