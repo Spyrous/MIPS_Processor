@@ -79,7 +79,7 @@ entity instr_dec is
         -----------------------------------------
         -- Determines the data to be written in the register specified by
         -- the writeback stage
-        WB_TO_DEC_DATA_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        WRITE_DATA_DEC_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
         -- Determines which register we write to from the writeback stage
         WRITE_REG_DEC_IN  : in std_logic_vector(4 downto 0);
 
@@ -258,7 +258,7 @@ begin
             end case;
             
             if (REG_WRITE_DEC_IN = '1') then
-                reg_file_s(to_integer(unsigned(WRITE_REG_DEC_IN))) <= WB_TO_DEC_DATA_IN;
+                reg_file_s(to_integer(unsigned(WRITE_REG_DEC_IN))) <= WRITE_DATA_DEC_IN;
             else
                 -- Do nothing
             end if;
