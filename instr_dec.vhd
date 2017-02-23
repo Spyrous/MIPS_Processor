@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-29
+-- Last update: 2017-02-20
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -41,37 +41,37 @@
 -----------------------------------------------------------------------
 -- libraries                                                         --
 -----------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
-library work;
-use work.MIPS_Instructions_Pack.all;
+LIBRARY WORK;
+USE WORK.MIPS_Instructions_Pack.ALL;
 
 
 --*******************************************************************--
 --                           E N T I T Y                             --
 --*******************************************************************--
-entity instr_dec is
-    generic (
-        REG_FILE_SIZE : integer := 32;
-        ADDR_WIDTH    : integer := 32;
-        DATA_WIDTH    : integer := 32
+ENTITY instr_dec IS
+    GENERIC (
+        C_REG_FILE_SIZE : INTEGER := 32;
+        C_ADDR_WIDTH    : INTEGER := 32;
+        C_DATA_WIDTH    : INTEGER := 32
     );
 
-    port (
+    PORT (
         -- Global clock signal
-        CLK_IN : in std_logic;
+        I_CLK : IN STD_LOGIC;
         -- Global reset signal active high
-        RST_IN : in std_logic;
+        I_RST : IN STD_LOGIC;
 
         -- Instruction to be decoded
-        INSTR_TBD_IN      : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        I_INSTR_TBD      : IN STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
 
         -- Program counter from fetch stage
-        PC_PLUS4_DEC_IN   : in unsigned(ADDR_WIDTH-1 downto 0);
+        I_PC_PLUS4_DEC   : IN unsigned(C_ADDR_WIDTH-1 DOWNTO 0);
         -- Program counter select signal for fetch stage
-        PC_SEL_DEC_OUT    : out std_logic;        
+        O_PC_SEL_DEC     : OUT STD_LOGIC;        
 
 
         -----------------------------------------
@@ -79,70 +79,70 @@ entity instr_dec is
         -----------------------------------------
         -- Determines the data to be written in the register specified by
         -- the writeback stage
-        WRITE_DATA_DEC_IN : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        I_WRITE_DATA_DEC : IN STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
         -- Determines which register we write to from the writeback stage
-        WRITE_REG_DEC_IN  : in std_logic_vector(4 downto 0);
+        I_WRITE_REG_DEC  : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 
         
         ----------------------------
         -- Control Signals Received
         ----------------------------
         -- Controls if we write at a register after writeback stage
-        REG_WRITE_DEC_IN : in std_logic;
+        I_REG_WRITE_DEC : IN STD_LOGIC;
         
         
         ------------------------
         -- Control Signals Sent
         ------------------------
         -- Controls if we write at a register after writeback stage
-        REG_WRITE_DEC_OUT  : out std_logic;
+        O_REG_WRITE_DEC  : OUT STD_LOGIC;
         -- Chooses between ALU result or memory data
         -- to be written back at registers
-        MEM_TO_REG_DEC_OUT : out std_logic;
+        O_MEM_TO_REG_DEC : OUT STD_LOGIC;
         -- Controls writes at memory stage
-        MEM_WRITE_DEC_OUT  : out std_logic;
+        O_MEM_WRITE_DEC  : OUT STD_LOGIC;
         -- Controls memory reads at memory stage
-        MEM_READ_DEC_OUT   : out std_logic;
+        O_MEM_READ_DEC   : OUT STD_LOGIC;
         -- Controls if one of the ALU sources will be a register
-        -- or the immidiate field
-        ALU_SRC_DEC_OUT    : out std_logic;
+        -- or the immediate field
+        O_ALU_SRC_DEC    : OUT STD_LOGIC;
         -- Controls where the results from writeback stage go
         -- either RS register or RT
-        REG_DST_DEC_OUT    : out std_logic;
+        O_REG_DST_DEC    : OUT STD_LOGIC;
         
         -- Determines which of the 32 registers
         -- will be written after writeback stage
-        WRITE_REG_DEC_OUT  : out std_logic_vector(4 downto 0);
+        O_WRITE_REG_DEC  : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
 
-        PC_PLUS4_DEC_OUT   : out unsigned(ADDR_WIDTH-1 downto 0);
+        O_PC_PLUS4_DEC   : OUT UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
         -- Decoded register number (0-31) of RT and RD
         -- Used for writeback stage to write to a register
         -- The result of writeback will go either to RT or RD
-        -- depending on the instruction decoded
-        RT_NUM_DEC_OUT     : out std_logic_vector(4 downto 0);
-        RD_NUM_DEC_OUT     : out std_logic_vector(4 downto 0);
+        -- dependINg on the instruction decoded
+        O_RT_NUM_DEC     : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
+        O_RD_NUM_DEC     : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
         
         -- Instruction opcode used for execution stage
-        OPCODE_DEC_OUT : out std_logic_vector(5 downto 0);
+        O_OPCODE_DEC : OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
         
         ---------------------------------------------------------
         -- Register values used in the ALU at execution stage
         ---------------------------------------------------------
         -- RS (Source Operand)
-        RS_VAL_DEC_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        O_RS_VAL_DEC     : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
         -- RT (Second Operand)
-        RT_VAL_DEC_OUT     : out std_logic_vector(DATA_WIDTH-1 downto 0);        
+        O_RT_VAL_DEC     : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);        
 
         
         ---------------------------------------------------------
         -- Signals used at the ALU of the execution stage
         ---------------------------------------------------------        
         -- Shift Amount
-        SHAMT_DEC_OUT  : out std_logic_vector(4 downto 0);
+        O_SHAMT_DEC  : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
         -- Function to be executed if instruction is R-Type
-        FUNCT_DEC_OUT  : out std_logic_vector(5 downto 0);
+        O_FUNCT_DEC  : OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
         -- Immediate Operand if instruction is I-Type
-        IMM_DEC_OUT    : out std_logic_vector(DATA_WIDTH-1 downto 0)
+        O_IMM_DEC    : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0)
     );
 end instr_dec;
 
@@ -150,18 +150,18 @@ end instr_dec;
 --*******************************************************************--
 --                     A R C H I T E C T U R E                       --
 --*******************************************************************--
-architecture Behavioral of instr_dec is
+ARCHITECTURE behavioral OF instr_dec IS
 
 
 -------------------------------------------------------------------------------
 -- Signals
 -------------------------------------------------------------------------------
-type registerFile is array(0 to REG_FILE_SIZE-1) of std_logic_vector(DATA_WIDTH-1 downto 0);
-signal reg_file_s : registerFile;
+TYPE T_REGISTER_FILE IS ARRAY(0 TO C_REG_FILE_SIZE-1) OF STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
+SIGNAL s_reg_file : T_REGISTER_FILE;
 -- Used to read the opcode and decide the fields to be decoded
-signal opcode_s   : std_logic_vector(5 downto 0);
--- The sign extended immediate field for I-Type instructions
-signal signed_imm_s : std_logic_vector(DATA_WIDTH-1 downto 0);
+SIGNAL s_opcode   : STD_LOGIC_VECTOR(5 DOWNTO 0);
+-- The sign extended immediate field for I-Type INstructions
+SIGNAL s_signed_imm : STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
 
 
 
@@ -169,11 +169,9 @@ signal signed_imm_s : std_logic_vector(DATA_WIDTH-1 downto 0);
 --*******************************************************************--
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--    
-begin
-    
-    
-    
-    opcode_s <= INSTR_TBD_IN(31 downto 26);
+BEGIN
+ 
+    s_opcode <= I_INSTR_TBD(31 DOWNTO 26);
 
     
     -----------------------------------------------------------------
@@ -184,84 +182,108 @@ begin
     --       on the type of the instruction(R/I/J-Type). The results
     --       are then forwarded for execution at the execution stage.
     -----------------------------------------------------------------
-    instr_dec_PROC: process(CLK_IN, RST_IN)
-    begin
-        if (RST_IN = '1') then
-            -- Set all 32 registers to 0 except register 0 which is initiated to hex 11111111
-            reg_file_s         <= (0 => x"00000010",
-                                   others => (others => '0'));
-            signed_imm_s       <= (others => '0');
-            PC_SEL_DEC_OUT     <= '0';
-            IMM_DEC_OUT        <= (others => '0');
-            PC_PLUS4_DEC_OUT   <= (others => '0');
-            REG_WRITE_DEC_OUT  <= '0';
-            MEM_TO_REG_DEC_OUT <= '0';
-            MEM_WRITE_DEC_OUT  <= '0';
-            ALU_SRC_DEC_OUT    <= '0';
-            PC_SEL_DEC_OUT     <= '0';
-            REG_DST_DEC_OUT    <= '0';
+    instr_dec_PROC: PROCESS(I_CLK, I_RST)
+    BEGIN
+        IF (I_RST = '1') THEN
+            -- Set all 32 registers to 0 except register 0 which is initiated to hex 0000_0000
+            s_reg_file       <= (0 => x"00000010",
+                                 1 => x"00000001",
+                                 2 => x"00000010",
+                                 3 => x"00000011",
+                                 OTHERS => (OTHERS => '0')
+                                 );
             
-        elsif (rising_edge(CLK_IN)) then
+            s_signed_imm     <= (OTHERS => '0');
+            O_PC_SEL_DEC     <= '0';
+            O_IMM_DEC        <= (OTHERS => '0');
+            O_PC_PLUS4_DEC   <= (OTHERS => '0');
+            O_REG_WRITE_DEC  <= '0';
+            O_MEM_TO_REG_DEC <= '0';
+            O_MEM_WRITE_DEC  <= '0';
+            O_ALU_SRC_DEC    <= '0';
+            O_PC_SEL_DEC     <= '0';
+            O_REG_DST_DEC    <= '0';
+            O_WRITE_REG_DEC  <= (OTHERS => '0');
+
+            O_RT_NUM_DEC     <= (OTHERS => '0');
+            O_RD_NUM_DEC     <= (OTHERS => '0');
+            O_RS_VAL_DEC     <= (OTHERS => '0');
+            O_RT_VAL_DEC     <= (OTHERS => '0');
+            
+        ELSIF (RISING_EDGE(I_CLK)) THEN
            
             -- Forward pc + 4 to the execute stage
-            PC_PLUS4_DEC_OUT  <= PC_PLUS4_DEC_IN;
+            O_PC_PLUS4_DEC  <= I_PC_PLUS4_DEC;
             
             -- Opcode is decoded by all types of instructions
-            OPCODE_DEC_OUT    <= INSTR_TBD_IN(31 downto 26);
+            O_OPCODE_DEC    <= I_INSTR_TBD(31 DOWNTO 26);
             
             -- R-Type decoded signals
-            SHAMT_DEC_OUT     <= INSTR_TBD_IN(10 downto 6);
-            FUNCT_DEC_OUT     <= INSTR_TBD_IN(5  downto 0);
+            O_SHAMT_DEC     <= I_INSTR_TBD(10 DOWNTO 6);
+            O_FUNCT_DEC     <= I_INSTR_TBD(5  DOWNTO 0);
 
             -- R-Type and I-Type decoded signals
-            RS_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(25 downto 21))));
-            RT_VAL_DEC_OUT    <= reg_file_s(to_integer(unsigned(INSTR_TBD_IN(20 downto 16))));
+            O_RS_VAL_DEC    <= s_reg_file(TO_INTEGER(UNSIGNED(I_INSTR_TBD(25 DOWNTO 21))));
+            O_RT_VAL_DEC    <= s_reg_file(TO_INTEGER(UNSIGNED(I_INSTR_TBD(20 DOWNTO 16))));
 
             -- I-Type immediate decoded field
-            IMM_DEC_OUT       <= signed_imm_s;
+            O_IMM_DEC       <= s_signed_imm;
 
             -- Destination number register
-            RT_NUM_DEC_OUT    <= INSTR_TBD_IN(25 downto 21);
-            RD_NUM_DEC_OUT    <= INSTR_TBD_IN(20 downto 16);
+            O_RT_NUM_DEC    <= I_INSTR_TBD(25 DOWNTO 21);
+            O_RD_NUM_DEC    <= I_INSTR_TBD(20 DOWNTO 16);
+
+            -- Writeback Stage
+            IF (I_REG_WRITE_DEC = '1') THEN
+                s_reg_file(TO_INTEGER(UNSIGNED(I_WRITE_REG_DEC))) <= I_WRITE_DATA_DEC;
+            END IF;
             
             -- If the MSB (Most Significant Bit) of our immediate field is '0' we extend
             -- with zeroes if it's '1' we extend ones
-            if (INSTR_TBD_IN(15) = '0') then
+            IF (I_INSTR_TBD(15) = '0') THEN
                 -- Concatenating 14 bits + immediate 16 bits + 2 zeroes by shifting to left
-                signed_imm_s <= x"000" & "00" & INSTR_TBD_IN(15 downto 0) & "00";                
-            else
+                s_signed_imm <= x"000" & "00" & I_INSTR_TBD(15 DOWNTO 0) & "00";                
+            ELSE
                 -- Concatenating 14 bits + immediate 16 bits + 2 zeroes by shifting to left
-                signed_imm_s <= x"FFF" & "11" & INSTR_TBD_IN(15 downto 0) & "00";               
-            end if;
+                s_signed_imm <= x"FFF" & "11" & I_INSTR_TBD(15 DOWNTO 0) & "00";               
+            END IF;
             
-            case (opcode_s) is
+            CASE (s_opcode) IS
                 -- If instruction R-Type decode the following fields
-                when R_TYPE_OP =>                                 
+                WHEN R_TYPE_OP =>                                 
                     -- Control signal configuration for R-Type
-                    REG_WRITE_DEC_OUT  <= '1';
-                    MEM_TO_REG_DEC_OUT <= '0';
-                    MEM_WRITE_DEC_OUT  <= '0';
-                    ALU_SRC_DEC_OUT    <= '0';
-                    PC_SEL_DEC_OUT     <= '0';
-                    REG_DST_DEC_OUT    <= '1';
-                        
+                    O_REG_WRITE_DEC    <= '1';
+                    O_MEM_TO_REG_DEC   <= '0';
+                    O_MEM_WRITE_DEC  <= '0';
+                    O_ALU_SRC_DEC    <= '0';
+                    O_PC_SEL_DEC       <= '0';
+                    O_REG_DST_DEC    <= '1';
+                    O_WRITE_REG_DEC  <= I_INSTR_TBD(15 DOWNTO 11);
                 -- If instruction is I-Type decode the following fields
-                when ADDI_OP|ANDI_OP =>
+                WHEN ADDI_OP|ANDI_OP =>
                     -- Destination register found in Instruction[20-16]
-                    REG_DST_DEC_OUT    <= '0';
+                    O_REG_DST_DEC    <= '0';
 
                     
-                when BEQ_OP =>
+                WHEN BEQ_OP =>
 
-                when others =>
+                WHEN OTHERS =>
                     
-            end case;
+            END CASE;
             
-            if (REG_WRITE_DEC_IN = '1') then
-                reg_file_s(to_integer(unsigned(WRITE_REG_DEC_IN))) <= WRITE_DATA_DEC_IN;
-            else
-                -- Do nothing
-            end if;
-        end if;
-    end process;
+        END IF;
+    END PROCESS;
+
+   -- s_reg_file(TO_INTEGER(UNSIGNED(I_WRITE_REG_DEC))) <= I_WRITE_DATA_DEC WHEN I_REG_WRITE_DEC = '1';
+
+--    writeback_PROC: PROCESS(I_REG_WRITE_DEC, I_WRITE_DATA_DEC,
+--                            I_WRITE_REG_DEC, I_RST)
+--    BEGIN
+--        IF (I_REG_WRITE_DEC = '1') THEN
+--            s_reg_file(TO_INTEGER(UNSIGNED(I_WRITE_REG_DEC))) <= I_WRITE_DATA_DEC;
+--        ELSE
+--        -- Do nothing
+--        END IF;
+--    END PROCESS;
+    
 end Behavioral;

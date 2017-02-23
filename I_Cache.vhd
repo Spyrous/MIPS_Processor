@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-09-05
+-- Last update: 2017-02-20
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -42,30 +42,30 @@
 -----------------------------------------------------------------------
 -- libraries                                                         --
 -----------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
 --*******************************************************************--
 --                           E N T I T Y                             --
 --*******************************************************************--
-entity I_Cache is
-    generic (
-        --  Cache size default is 128*32 = 4096 bytes or 4kB
-        CACHE_SIZE : integer := 128;
-        DATA_WIDTH : integer := 32;
-        ADDR_WIDTH : integer := 32
-        );
-    port (
-        RST_IN : in std_logic;
+ENTITY I_Cache IS
+    GENERIC (
+        --  Cache size default is 16*32 = 492 bytes
+        C_CACHE_SIZE : INTEGER := 16;
+        C_DATA_WIDTH : INTEGER := 32;
+        C_ADDR_WIDTH : INTEGER := 32
+    );
+    PORT (
+        I_RST : IN STD_LOGIC;
 
         -- This pointer comes from the program counter and points in our memory
-        I_CACHE_PTR_IN : in unsigned(ADDR_WIDTH-1 downto 0);
+        I_CACHE_PTR  : IN UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
 
         -- Instruction that cache outputs depending on the pointer
-        CACHE_INSTR_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0) 
-);
-end I_Cache;
+        O_CACHE_INSTR : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0) 
+    );
+END I_Cache;
 
 
 
@@ -73,29 +73,42 @@ end I_Cache;
 --*******************************************************************--
 --                     A R C H I T E C T U R E                       --
 --*******************************************************************--
-architecture Behavioral of I_Cache is
-
-
-    type CACHE_MEMORY is array (0 to CACHE_SIZE-1) of std_logic_vector(DATA_WIDTH-1 downto 0);
-    signal INSTR_CACHE : CACHE_MEMORY;
-
-
+ARCHITECTURE behavioral OF I_Cache IS
+    
+    TYPE T_CACHE_MEMORY IS ARRAY (0 TO C_CACHE_SIZE-1) OF STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
+    --SIGNAL s_instr_cache : T_CACHE_MEMORY;
+    CONSTANT c_instr_cache : T_CACHE_MEMORY := (
+                -- Branch
+                --4  => x"10000010",
+                -- Branch
+                --8  => x"10000100",
+                -- R-Type Add
+                12 => "00000000011000100000100000100000",
+           OTHERS => (OTHERS =>'0')
+        );
 
 --*******************************************************************--
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--
-begin
+BEGIN
 
-    process(I_CACHE_PTR_IN, RST_IN)
-    begin
-        if (RST_IN = '1') then
-            INSTR_CACHE <= (4 => x"10000010",
-                            8 => x"10000100",
-                others => (others =>'0'));
-            CACHE_INSTR_OUT <= x"00000000";
-        else            
-            CACHE_INSTR_OUT <= INSTR_CACHE(to_integer(I_CACHE_PTR_IN));
-        end if;
-    end process;
+    PROCESS(I_CACHE_PTR, I_RST)
+    BEGIN
+        IF (I_RST = '1') THEN
+           -- s_instr_cache <= (
+           --     -- Branch
+           --     4  => x"10000010",
+           --     -- Branch
+           --     8  => x"10000100",
+           --     -- R-Type Add
+           --     12 => x"00000020",
+           --OTHERS => (OTHERS =>'0'));
+
+
+            O_CACHE_INSTR <= x"00000000";
+        ELSE            
+            O_CACHE_INSTR <= c_instr_cache(TO_INTEGER(I_CACHE_PTR(6 DOWNTO 0)));
+        END IF;
+    END PROCESS;
     
-end Behavioral;
+END behavioral;

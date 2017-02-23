@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-16                                                            
--- Last update: 2016-09-04
+-- Last update: 2017-02-20
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -43,139 +43,92 @@
 -----------------------------------------------------------------------
 -- libraries                                                         --
 -----------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
 
 --*******************************************************************--
 --                           E N T I T Y                             --
 --*******************************************************************--
-entity instr_fetch is
-    generic (
-        CACHE_SIZE : integer := 128;
-        DATA_WIDTH : integer := 32;
-        ADDR_WIDTH : integer := 32
+ENTITY instr_fetch IS
+    GENERIC (
+        C_CACHE_SIZE : INTEGER := 128;
+        C_DATA_WIDTH : INTEGER := 32;
+        C_ADDR_WIDTH : INTEGER := 32
     );
-    Port (
-        CLK_IN : in std_logic;
-        RST_IN : in std_logic;
+    PORT (
+        I_CLK : IN STD_LOGIC;
+        I_RST : IN STD_LOGIC;
 
         -- Program counter select in fetch stage
-        PC_SEL_FE_IN    : in std_logic;
+        I_PC_SEL_FE    : IN STD_LOGIC;
         -- Program counter branch address in fetch stage
-        PC_BRANCH_FE_IN : in unsigned(ADDR_WIDTH-1 downto 0);
+        I_PC_BRANCH_FE : IN UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
         -- Program counter output to decode stage
-        PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0);
+        O_PC_PLUS4_FE    : OUT UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
         -- Instruction to be executed by the rest of the pipeline
-        CACHE_INSTR_FE_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0)
+        O_CACHE_INSTR_FE : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0)
     );
-end instr_fetch;
+END instr_fetch;
 
 
 --*******************************************************************--
 --                     A R C H I T E C T U R E                       --
 --*******************************************************************--
-architecture Structural of instr_fetch is
+ARCHITECTURE Structural OF instr_fetch IS
 
 
     -------------------------------------------------------------------
     -- Signals                                                       --
     -------------------------------------------------------------------
     -- Connects the output of program counter to the input of I_Cache
-    signal i_cache_ptr_s : unsigned(ADDR_WIDTH-1 downto 0);
-
-
-
-
-    -------------------------------------------------------------------
-    -- Components                                                    --
-    -------------------------------------------------------------------
-    component prog_counter
-        generic (
-            ADDR_WIDTH : integer := 32
-            );
-        
-        port (
-            -- Global clock signal
-            CLK_IN : in std_logic;
-            -- Global reset signal active high
-            RST_IN : in std_logic;
-
-            -- Program counter select in fetch stage
-            PC_SEL_FE_IN    : in std_logic;
-            -- Program counter branch address in fetch stage
-            PC_BRANCH_FE_IN : in unsigned(ADDR_WIDTH-1 downto 0);
-            -- Program counter pointer to instruction cache memory
-            I_CACHE_PTR_FE_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
-            -- Program counter output to decode stage
-            PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0)
-            
-        );
-    end component;
-
-    component I_Cache
-        generic (
-            --  Cache size default is 128*32 = 4096 bytes or 4kB
-            CACHE_SIZE : integer := 128;
-            DATA_WIDTH : integer := 32;
-            ADDR_WIDTH : integer := 32
-        );
-        port (
-            RST_IN : in std_logic;
-
-            -- This pointer comes from the program counter and points in our memory
-            I_CACHE_PTR_IN : in unsigned(ADDR_WIDTH-1 downto 0);
-
-            -- Instruction that cache outputs depending on the pointer
-            CACHE_INSTR_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0) 
-        );
-    end component;
+    SIGNAL i_cache_ptr_s : UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
 
 
 --*******************************************************************--
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--
-begin
+BEGIN
 
     -------------------------------------------------------------------
     -- Port Maps                                                     --
     -------------------------------------------------------------------
-    program_counter: prog_counter
-        generic map (
-            ADDR_WIDTH => 32
-            )
-        port map (
+    program_counter: ENTITY WORK.prog_counter
+        GENERIC MAP (
+            C_ADDR_WIDTH => 32
+        )
+        PORT MAP (
             -- Global clock signal
-            CLK_IN => CLK_IN,
+            I_CLK => I_CLK,
             -- Global reset signal active high
-            RST_IN => RST_IN,
+            I_RST => I_RST,
 
             -- Program counter select in fetch stage
-            PC_SEL_FE_IN       => PC_SEL_FE_IN,
+            I_PC_SEL_FE       => I_PC_SEL_FE,
             -- Program counter branch address in fetch stage
-            PC_BRANCH_FE_IN    => PC_BRANCH_FE_IN,
+            I_PC_BRANCH_FE    => I_PC_BRANCH_FE,
             -- Program counter output to decode stage
-            PC_PLUS4_FE_OUT    => PC_PLUS4_FE_OUT,
+            O_PC_PLUS4_FE    => O_PC_PLUS4_FE,
             -- Program counter output cache memory
-            I_CACHE_PTR_FE_OUT => i_cache_ptr_s
+            O_CACHE_PTR_FE => i_cache_ptr_s
         );
 
-    instruction_cache: I_Cache
-        generic map (
-            CACHE_SIZE => 128,
-            DATA_WIDTH => 32,
-            ADDR_WIDTH => 32
+    instruction_cache: ENTITY WORK.I_Cache
+        GENERIC MAP (
+            C_CACHE_SIZE => 128,
+            C_DATA_WIDTH => 32,
+            C_ADDR_WIDTH => 32
         )
-        port map (
-            RST_IN => RST_IN,
+        PORT MAP (
+            I_RST => I_RST,
 
             -- This pointer comes from the program counter and points in our memory
-            I_CACHE_PTR_IN => i_cache_ptr_s,
+            I_CACHE_PTR => i_cache_ptr_s,
 
             -- Instruction that cache outputs depending on the pointer
-            CACHE_INSTR_OUT => CACHE_INSTR_FE_OUT
+            O_CACHE_INSTR => O_CACHE_INSTR_FE
         );
 
     
-end Structural;
+END Structural;

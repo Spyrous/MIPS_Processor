@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-19                                                            
--- Last update: 2016-09-29
+-- Last update: 2017-02-21
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -40,81 +40,81 @@
 -----------------------------------------------------------------------
 -- libraries                                                         --
 -----------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
-library work;
-use work.MIPS_Instructions_Pack.ALL;
+LIBRARY WORK;
+USE WORK.MIPS_Instructions_Pack.ALL;
 
 
 --*******************************************************************--
 --                           E N T I T Y                             --
 --*******************************************************************--
-entity instr_exe is
-    generic (
-        DATA_WIDTH : integer := 32;
-        ADDR_WIDTH : integer := 32
+ENTITY instr_exe is 
+    GENERIC (
+        C_DATA_WIDTH : INTEGER := 32;
+        C_ADDR_WIDTH : INTEGER := 32
     );
     
-    port (
+    PORT (
         -- Global clock signal
-        CLK_IN : in std_logic;
+        I_CLK : IN STD_LOGIC;
         -- Global reset signal active high
-        RST_IN : in std_logic;
+        I_RST : IN STD_LOGIC;
 
         -- Opcode to be decoded from first 6 bits of the instruction
-        OPCODE_EXE_IN : in std_logic_vector(5 downto 0);
+        I_OPCODE_EXE : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
 
 
         ----------------------------------------------
         -- Control Signals Received from Decode Stage
         ----------------------------------------------
         -- Controls if we write at a register after writeback stage
-        REG_WRITE_EXE_IN  : in std_logic;
+        I_REG_WRITE_EXE  : IN STD_LOGIC;
         -- Chooses between ALU result or memory data
         -- to be written back at registers
-        MEM_TO_REG_EXE_IN : in std_logic;
+        I_MEM_TO_REG_EXE : IN STD_LOGIC;
         -- Controls memory writes at memory stage
-        MEM_WRITE_EXE_IN  : in std_logic;
+        I_MEM_WRITE_EXE  : IN STD_LOGIC;
         -- Controls memory reads at memory stage
-        MEM_READ_EXE_IN   : in std_logic;
+        I_MEM_READ_EXE   : IN STD_LOGIC;
         -- Controls if one of the ALU sources will be a register
         -- or the immidiate field
-        ALU_SRC_EXE_IN    : in std_logic;
+        I_ALU_SRC_EXE    : IN STD_LOGIC;
         -- Controls where the results from writeback stage go
         -- either RS register or RT
-        REG_DST_EXE_IN    : in std_logic;
+        I_REG_DST_EXE    : IN STD_LOGIC;
         -- Program counter from fetch stage
-        PC_PLUS4_EXE_IN   : in unsigned(ADDR_WIDTH-1 downto 0);
-        -- Determines which of the 32 registers
+        I_PC_PLUS4_EXE   : IN UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
+        -- DetermINes which of the 32 registers
         -- will be written after writeback stage
-        WRITE_REG_EXE_IN  : in std_logic_vector(4 downto 0);
+        I_WRITE_REG_EXE  : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
                    
         ----------------------------------------
         -- Control Signals Sent to Memory Stage
         ----------------------------------------
         -- Controls if we write at a register after writeback stage
-        REG_WRITE_EXE_OUT  : out std_logic;
+        O_REG_WRITE_EXE  : OUT STD_LOGIC;
         -- Chooses between ALU result or memory data
         -- to be written back at registers
-        MEM_TO_REG_EXE_OUT : out std_logic;
+        O_MEM_TO_REG_EXE : OUT STD_LOGIC;
         -- Controls memory writes at memory stage
-        MEM_WRITE_EXE_OUT  : out std_logic;
+        O_MEM_WRITE_EXE  : OUT STD_LOGIC;
         -- Controls memory reads at memory stage
-        MEM_READ_EXE_OUT   : out std_logic;
-        -- Program counter select in fetch stage
-        PC_SEL_EXE_OUT     : out std_logic;
+        O_MEM_READ_EXE   : OUT STD_LOGIC;
+        -- Program counter select IN fetch stage
+        O_PC_SEL_EXE     : OUT STD_LOGIC;
         -- Program counter branch address forwarded to fetch stage
-        PC_BRANCH_EXE_OUT  : out unsigned(ADDR_WIDTH-1 downto 0);
+        O_PC_BRANCH_EXE  : OUT UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
         -- ALU result
-        ALU_RES_EXE_OUT    : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        O_ALU_RES_EXE    : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
         -- Store word instruction write data. It writes the contents of
         -- RT register at the memory stage if instruction is store word (SW)
-        WRITE_DATA_EXE_OUT : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        O_WRITE_DATA_EXE : OUT STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
         -- Determines which of the 32 registers
         -- will be written after writeback stage
-        WRITE_REG_EXE_OUT  : out std_logic_vector(4 downto 0);
+        O_WRITE_REG_EXE  : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
                    
         
         ------------------------------------------------
@@ -125,26 +125,26 @@ entity instr_exe is
         -- Used for writeback stage to write to a register
         -- The result of writeback will go either to RT or RD
         -- depending on the instruction decoded
-        RT_NUM_EXE_IN  : in std_logic_vector(4 downto 0);
-        RD_NUM_EXE_IN  : in std_logic_vector(4 downto 0);
+        I_RT_NUM_EXE  : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+        I_RD_NUM_EXE  : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
         -- RS (Source Operand)
-        RS_VAL_EXE_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        I_RS_VAL_EXE  : IN STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
         -- RT (Second Operand)
-        RT_VAL_EXE_IN  : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        I_RT_VAL_EXE  : IN STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0);
         
         ------------------------------------------------
         -- Signals received from decoded stage they are
         -- used at the ALU of the execution stage
         ------------------------------------------------  
         -- Shift Amount
-        SHAMT_EXE_IN   : in std_logic_vector(4 downto 0);
+        I_SHAMT_EXE   : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
         -- Function to be executed if instruction is R-Type
-        FUNCT_EXE_IN   : in std_logic_vector(5 downto 0);
+        I_FUNCT_EXE   : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
         -- Immediate Operand if instruction is I-Type
-        IMM_EXE_IN     : in std_logic_vector(DATA_WIDTH-1 downto 0)
+        I_IMM_EXE     : IN STD_LOGIC_VECTOR(C_DATA_WIDTH-1 DOWNTO 0)
 
 );
-end instr_exe;
+END instr_exe;
 
 
 
@@ -152,20 +152,19 @@ end instr_exe;
 --*******************************************************************--
 --                     A R C H I T E C T U R E                       --
 --*******************************************************************--
-architecture Behavioral of instr_exe is
+ARCHITECTURE behavioral OF instr_exe IS
 
 
 -------------------------------------------------------------------------------
 -- Signals
 -------------------------------------------------------------------------------
-
+signal test : STD_LOGIC_VECTOR(31 downto 0);
 
 
 --*******************************************************************--
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--        
-begin
-
+BEGIN
     
     -----------------------------------------------------------------
     --                   Instruction Execute                 
@@ -175,112 +174,120 @@ begin
     --       fields. Also consumes some of the control signals and 
     --       generates results for the memory stage.
     -----------------------------------------------------------------
-    instr_exe_PROC: process(CLK_IN, RST_IN)
-    begin
-        if (RST_IN = '1') then
-            ALU_RES_EXE_OUT    <= (others => '0');
-            PC_BRANCH_EXE_OUT  <= (others => '0');
-            REG_WRITE_EXE_OUT  <= '0';
-            MEM_TO_REG_EXE_OUT <= '0';
-            MEM_WRITE_EXE_OUT  <= '0';
-            WRITE_DATA_EXE_OUT <= (others => '0');           
-            PC_SEL_EXE_OUT     <= '0';
+    instr_exe_PROC: PROCESS(I_CLK, I_RST)
+    BEGIN
+        IF (I_RST = '1') THEN
+            test    <= (OTHERS => '0');
+            O_PC_BRANCH_EXE  <= (OTHERS => '0');
+            O_REG_WRITE_EXE  <= '0';
+            O_MEM_TO_REG_EXE <= '0';
+            O_MEM_WRITE_EXE  <= '0';
+            O_WRITE_DATA_EXE <= (OTHERS => '0');           
+            O_PC_SEL_EXE     <= '0';
+            O_WRITE_REG_EXE  <= (OTHERS => '0');
             
-        elsif (rising_edge(CLK_IN)) then
+        ELSIF (rising_edge(I_CLK)) THEN
             -- Signals forwarded to memory stage
-            REG_WRITE_EXE_OUT  <= REG_WRITE_EXE_IN;
-            MEM_TO_REG_EXE_OUT <= MEM_TO_REG_EXE_IN;
-            MEM_WRITE_EXE_OUT  <= MEM_WRITE_EXE_IN;
-            WRITE_DATA_EXE_OUT <= RT_VAL_EXE_IN;
-            PC_BRANCH_EXE_OUT  <= PC_PLUS4_EXE_IN + unsigned(IMM_EXE_IN(15 downto 0) & "00");   
-            MEM_READ_EXE_OUT   <= MEM_READ_EXE_IN;
-            WRITE_REG_EXE_OUT  <= WRITE_REG_EXE_IN;
+            O_REG_WRITE_EXE  <= I_REG_WRITE_EXE;
+            O_MEM_TO_REG_EXE <= I_MEM_TO_REG_EXE;
+            O_MEM_WRITE_EXE  <= I_MEM_WRITE_EXE;
+            O_WRITE_DATA_EXE <= I_RT_VAL_EXE;
+            O_PC_BRANCH_EXE  <= I_PC_PLUS4_EXE + UNSIGNED(I_IMM_EXE(15 DOWNTO 0) & "00");   
+            O_MEM_READ_EXE   <= I_MEM_READ_EXE;
+            O_WRITE_REG_EXE  <= I_WRITE_REG_EXE;
+            
             -- If the opcode is of type R then check the
             -- funct field to execute an operation
-            if (OPCODE_EXE_IN = R_TYPE_OP) then
-                case FUNCT_EXE_IN is
+            IF (I_OPCODE_EXE = R_TYPE_OP) THEN
+                O_PC_SEL_EXE <= '0';
+                CASE I_FUNCT_EXE IS
                     -- Arithmetic Operations
-                    when ADD_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) + unsigned(RT_VAL_EXE_IN));
-                    when ADDU_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) + unsigned(RT_VAL_EXE_IN));
-                    when SUB_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) - unsigned(RT_VAL_EXE_IN));
-                    when SUBU_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) - unsigned(RT_VAL_EXE_IN));
+                    WHEN ADD_OP =>
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) + UNSIGNED(I_RT_VAL_EXE));
+                    WHEN ADDU_OP =>
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) + UNSIGNED(I_RT_VAL_EXE));
+                    WHEN SUB_OP =>
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) - UNSIGNED(I_RT_VAL_EXE));
+                    WHEN SUBU_OP =>
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) - UNSIGNED(I_RT_VAL_EXE));
                     -- Logic Operations
-                    when AND_OP =>
-                        ALU_RES_EXE_OUT <= RS_VAL_EXE_IN and RT_VAL_EXE_IN;
-                    when OR_OP =>
-                        ALU_RES_EXE_OUT <= RS_VAL_EXE_IN or RT_VAL_EXE_IN;
-                    when XOR_OP =>
-                        ALU_RES_EXE_OUT <= RS_VAL_EXE_IN xor RT_VAL_EXE_IN;
-                    when NOR_OP =>
-                        ALU_RES_EXE_OUT <= RS_VAL_EXE_IN nor RT_VAL_EXE_IN;
+                    WHEN AND_OP =>
+                        test <= I_RS_VAL_EXE AND I_RT_VAL_EXE;
+                    WHEN OR_OP =>
+                        test <= I_RS_VAL_EXE OR I_RT_VAL_EXE;
+                    WHEN XOR_OP =>
+                        test <= I_RS_VAL_EXE XOR I_RT_VAL_EXE;
+                    WHEN NOR_OP =>
+                        test <= I_RS_VAL_EXE NOR I_RT_VAL_EXE;
                     -- Shift Left Operations
-                    when SLL_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RT_VAL_EXE_IN) sll to_integer(unsigned(SHAMT_EXE_IN)));
-                    when SLLV_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RT_VAL_EXE_IN) sll to_integer(unsigned(RS_VAL_EXE_IN(4 downto 0))));
+                    WHEN SLL_OP =>
+                        --test <= STD_LOGIC_VECTOR(UNSIGNED(I_RT_VAL_EXE) SLL TO_INTEGER(UNSIGNED(I_SHAMT_EXE)));
+                        -- Alternative: std_logic_vector(shift_left(unsigned(accum), to_integer(unsigned(OP1))));
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) + 5);
+                    WHEN SLLV_OP =>
+                        --test <= STD_LOGIC_VECTOR(UNSIGNED(I_RT_VAL_EXE) SLL TO_INTEGER(UNSIGNED(I_RS_VAL_EXE(4 DOWNTO 0))));
                     -- Shift Right Operations
-                    when SRL_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RT_VAL_EXE_IN) srl to_integer(unsigned(SHAMT_EXE_IN)));
-                    when SRLV_OP =>
-                        ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RT_VAL_EXE_IN) srl to_integer(unsigned(RS_VAL_EXE_IN(4 downto 0))));
-                    when SRA_OP =>
+                    WHEN SRL_OP =>
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RT_VAL_EXE) SRL TO_INTEGER(UNSIGNED(I_SHAMT_EXE)));
+                    WHEN SRLV_OP =>
+                        test <= STD_LOGIC_VECTOR(UNSIGNED(I_RT_VAL_EXE) SRL TO_INTEGER(UNSIGNED(I_RS_VAL_EXE(4 DOWNTO 0))));
+                    WHEN SRA_OP =>
                         
-                    when SRAV_OP =>
+                    WHEN SRAV_OP =>
 
                         
                     -- Set on Less Than Operations
-                    when SLT_OP =>
-                        if (signed(RS_VAL_EXE_IN) < signed(RT_VAL_EXE_IN)) then
-                            ALU_RES_EXE_OUT <= x"00000001";
-                        else
-                            ALU_RES_EXE_OUT <= x"00000000";
-                        end if;
-                    when SLTU_OP =>
-                        if (unsigned(RS_VAL_EXE_IN) < unsigned(RT_VAL_EXE_IN)) then
-                            ALU_RES_EXE_OUT <= x"00000001";
-                        else
-                            ALU_RES_EXE_OUT <= x"00000000";
-                        end if;
+                    WHEN SLT_OP =>
+                        IF (signed(I_RS_VAL_EXE) < signed(I_RT_VAL_EXE)) THEN
+                            test <= x"00000001";
+                        ELSE
+                            test <= x"00000000";
+                        END IF;
+                    WHEN SLTU_OP =>
+                        IF (UNSIGNED(I_RS_VAL_EXE) < UNSIGNED(I_RT_VAL_EXE)) THEN
+                            test <= x"00000001";
+                        ELSE
+                            test <= x"00000000";
+                        END IF;
                         
-                    when others =>
+                    WHEN OTHERS =>
                         
-                end case;
-             
-            end if;
-        -- If it's not R-Type use the opcode to execute
-        -- the appropriate operation (I-Type or J-Type)
-            case OPCODE_EXE_IN is
-                when ADDI_OP  =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
-                when ADDIU_OP =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
-                when ANDI_OP  =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) and unsigned(IMM_EXE_IN));
-                when ORI_OP   =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) or  unsigned(IMM_EXE_IN));
-                when XORI_OP  =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN) xor unsigned(IMM_EXE_IN));
-                when LW_OP    =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
-                when SW_OP    =>
-                    ALU_RES_EXE_OUT <= std_logic_vector(unsigned(RS_VAL_EXE_IN)  +  unsigned(IMM_EXE_IN));
-                when BEQ_OP =>
-                    -- If RS = RT 
-                    if ( RS_VAL_EXE_IN = RT_VAL_EXE_IN ) then
-                        -- Branch
-                        PC_SEL_EXE_OUT <= '1';
-                    else
-                        -- PC + 4
-                        PC_SEL_EXE_OUT <= '0';
-                    end if;
-                when others =>
-
-            end case;
+                END CASE;
                 
-        end if;
-    end process;
-end Behavioral;
+            --ELSE
+            --    -- If it's not R-Type use the opcode to execute
+            --    -- the appropriate operation (I-Type or J-Type)
+            --    CASE I_OPCODE_EXE IS
+            --        WHEN ADDI_OP  =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE)  +  UNSIGNED(I_IMM_EXE));
+            --        WHEN ADDIU_OP =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE)  +  UNSIGNED(I_IMM_EXE));
+            --        WHEN ANDI_OP  =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) AND UNSIGNED(I_IMM_EXE));
+            --        WHEN ORI_OP   =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) OR  UNSIGNED(I_IMM_EXE));
+            --        WHEN XORI_OP  =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE) XOR UNSIGNED(I_IMM_EXE));
+            --        WHEN LW_OP    =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE)  +  UNSIGNED(I_IMM_EXE));
+            --        WHEN SW_OP    =>
+            --            O_ALU_RES_EXE <= STD_LOGIC_VECTOR(UNSIGNED(I_RS_VAL_EXE)  +  UNSIGNED(I_IMM_EXE));
+            --        WHEN BEQ_OP =>
+            --            -- If RS = RT 
+            --            IF ( I_RS_VAL_EXE = I_RT_VAL_EXE ) THEN
+            --                -- Branch
+            --                O_PC_SEL_EXE <= '1';
+            --            ELSE
+            --                -- PC + 4
+            --                O_PC_SEL_EXE <= '0';
+            --            END IF;
+            --        WHEN OTHERS =>
+
+            --    END CASE;
+            END IF;
+        END IF;
+    END PROCESS;
+
+    O_ALU_RES_EXE <= test;
+    
+END behavioral;

@@ -6,7 +6,7 @@
 -- Author     : Spyros Chiotakis <spyros.chiotakis@gmail.com>                         
 -- Company    :                                                                       
 -- Created    : 2016-05-15                                                            
--- Last update: 2016-09-10
+-- Last update: 2017-02-20
 -- Platform   : Windows 10 Professional                                            
 -- Standard   : VHDL'93/02                                                            
 ----------------------------------------------------------------------------------------
@@ -42,48 +42,48 @@
 -----------------------------------------------------------------------
 -- libraries                                                         --
 -----------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
 
 
 --*******************************************************************--
 --                           E N T I T Y                             --
 --*******************************************************************--
-entity prog_counter is
-    generic (
-        ADDR_WIDTH : integer := 32
+ENTITY prog_counter IS
+    GENERIC (
+        C_ADDR_WIDTH : INTEGER := 32
     );
     
-    port (
+    PORT (
         -- Global clock signal
-        CLK_IN : in std_logic;
+        I_CLK : IN STD_LOGIC;
         -- Global reset signal active high
-        RST_IN : in std_logic;
+        I_RST : IN std_logic;
 
         -- Program counter select in fetch stage
-        PC_SEL_FE_IN       : in std_logic;
+        I_PC_SEL_FE       : IN  STD_LOGIC;
         -- Program counter branch address in fetch stage
-        PC_BRANCH_FE_IN    : in unsigned(ADDR_WIDTH-1 downto 0);
-        I_CACHE_PTR_FE_OUT : out unsigned(ADDR_WIDTH-1 downto 0);
+        I_PC_BRANCH_FE    : IN  UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
+        O_CACHE_PTR_FE    : OUT UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
         -- Program counter output
-        PC_PLUS4_FE_OUT    : out unsigned(ADDR_WIDTH-1 downto 0)
+        O_PC_PLUS4_FE     : OUT UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0)
     );
-end prog_counter;
+END prog_counter;
 
 
 
 --*******************************************************************--
 --                     A R C H I T E C T U R E                       --
 --*******************************************************************--
-architecture Behavioral of prog_counter is
+ARCHITECTURE behavioral OF prog_counter IS
 
 
 -------------------------------------------------------------------
 -- Signals                                                       --
 -------------------------------------------------------------------
-signal pc_out_s : unsigned(ADDR_WIDTH-1 downto 0);
+SIGNAL s_pc_out : UNSIGNED(C_ADDR_WIDTH-1 DOWNTO 0);
 
 
     
@@ -91,10 +91,10 @@ signal pc_out_s : unsigned(ADDR_WIDTH-1 downto 0);
 --*******************************************************************--
 --          B E G I N  F O R M A L  A R C H I T E C T U R E          --
 --*******************************************************************--
-begin
+BEGIN
 
-    I_CACHE_PTR_FE_OUT <= pc_out_s;
-    PC_PLUS4_FE_OUT    <= pc_out_s;
+    O_CACHE_PTR_FE   <= s_pc_out;
+    O_PC_PLUS4_FE    <= s_pc_out;
     ---------------------------------------------------------------
     --                 Program Counter Increment                 
     --                                                           
@@ -102,20 +102,19 @@ begin
     --       The output points to the address of the instruction 
     --       memory to be fetched.                               
     ---------------------------------------------------------------
-    pc_incr_PROC : process(CLK_IN, RST_IN)
-    begin
-        if (RST_IN = '1') then           
-            pc_out_s           <= x"00000000";
-        elsif (rising_edge(CLK_IN)) then
+    pc_incr_PROC : PROCESS(I_CLK, I_RST)
+    BEGIN
+        IF (I_RST = '1') THEN           
+            s_pc_out <= x"00000000";
+        ELSIF (RISING_EDGE(I_CLK)) THEN
             
-            if (PC_SEL_FE_IN = '0') then
-                pc_out_s <= pc_out_s + 4;
-            elsif (PC_SEL_FE_IN = '1') then
-                pc_out_s <= PC_BRANCH_FE_IN;
-            end if;
-            
-        end if;
-    end process;
-
-    
-end Behavioral;
+            IF (I_PC_SEL_FE = '0') THEN
+                s_pc_out <= s_pc_out + 4;
+            ELSIF (I_PC_SEL_FE = '1') THEN
+                s_pc_out <= I_PC_BRANCH_FE;
+            END IF;
+     
+        END IF;
+    END PROCESS;
+ 
+END behavioral;
